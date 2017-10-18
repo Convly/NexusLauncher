@@ -20,6 +20,10 @@
 *.mod
 *.smod
 
+# Directories
+build/
+bin/
+
 # Compiled Static libraries
 *.lai
 *.la
@@ -30,3 +34,13 @@
 *.exe
 *.out
 *.app
+
+# Project & Editor
+*.sln
+*.log
+.vs
+.vscode
+*.vcxproj
+*.filters
+.DS_Store
+Desktop.ini
