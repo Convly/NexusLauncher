@@ -16,6 +16,8 @@
 *.dylib
 *.dll
 
+!lib/win/dll/*.dll
+
 # Fortran module files
 *.mod
 *.smod
