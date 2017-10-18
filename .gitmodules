@@ -1,0 +1,3 @@
+[submodule "external/NexusEngine"]
+	path = external/NexusEngine
+	url = https://github.com/Convly/NexusEngine
