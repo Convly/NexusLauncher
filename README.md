@@ -1,2 +1,2 @@
 # NexusLauncher
-Launcher for Nexus's games library
+Launcher for Nexus games library
