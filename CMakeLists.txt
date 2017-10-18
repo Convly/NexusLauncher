@@ -6,9 +6,9 @@ set(APP_NAME "NexusLauncher")
 project(${APP_NAME})
 
 ### HEADERS FILES
-# include_directories(
-#	${APP_DIR}/path/to/include
-# )
+include_directories(
+    ${APP_DIR}/src/widget/class/MainWindow
+)
 
 # Enable debug symbols by default
 if(NOT CMAKE_BUILD_TYPE)
@@ -69,9 +69,8 @@ file(GLOB_RECURSE HEADER_LAUNCHER_FILES_HPP	${APP_DIR}/include/*.hpp)
 
 # APP FORMS UI
 ## All *.ui file goes there as
-## ${APP_DIR}/path/to/ui/file.ui
 qt5_wrap_ui(UIS_HDRS
-
+    ${APP_DIR}/src/widget/class/MainWindow/mainwindow.ui
 )
 
 ### EXECUTABLE

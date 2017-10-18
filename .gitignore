@@ -44,3 +44,4 @@ bin/
 *.filters
 .DS_Store
 Desktop.ini
+*.user
