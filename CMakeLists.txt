@@ -15,6 +15,7 @@ message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME
 include_directories(
 	${APP_DIR}/src/systems/templates
 	${APP_DIR}/src/systems/class/UISystem/
+	${APP_DIR}/src/launcher/class/
 )
 
 # Enable debug symbols by default
