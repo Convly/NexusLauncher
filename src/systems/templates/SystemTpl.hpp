@@ -12,7 +12,7 @@ namespace nx {
 
 	public:
 		virtual void				init(void) = 0;
-		virtual const std::string&	getName(void) const = 0;
+		virtual const std::string&	getName(void) const { return this->_name; }
 
 	protected:
 		const std::string			_name;
