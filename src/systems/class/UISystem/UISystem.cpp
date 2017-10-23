@@ -35,9 +35,10 @@ int const										nx::UISystem::hideWindow(std::string const& windowName)
 
 void nx::UISystem::init()
 {
+	this->showWindow("MainWindow");
 }
 
-int nx::UISystem::run() {
-	this->showWindow("MainWindow");
+int nx::UISystem::run()
+{
 	return (this->_app.exec());
 }
