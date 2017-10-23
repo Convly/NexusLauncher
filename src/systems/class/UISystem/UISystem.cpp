@@ -38,5 +38,6 @@ void nx::UISystem::init()
 }
 
 int nx::UISystem::run() {
-	return this->_app.exec();
+	this->showWindow("MainWindow");
+	return (this->_app.exec());
 }
