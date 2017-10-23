@@ -8,6 +8,6 @@ int main(int ac, char **av)
 		return launcher.run();
 	} catch (...) {
 		std::cerr << "Unexpected error" << std::endl;
-		return -1;
+		return EXIT_FAILURE;
 	}
 }
