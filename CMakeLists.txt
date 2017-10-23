@@ -1,5 +1,6 @@
 ### if your installation path are customized, please indicate them through the following vars
 ### --> (BIN_MSVC_PATH) default =  "C:/Qt/5.9.1/msvc2015/bin"
+### --> (FSLIB_STATIC) default = "/usr/lib/gcc/x86_64-linux-gnu/5/libstdc++fs.a" use only in linux to compile with the filesystem experimental library in c++14
 #
 
 ### GENERAL SETTINGS
@@ -11,9 +12,15 @@ project(${APP_NAME})
 
 ### USEFUL VARIABLES
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+### COMPILATOR OPTIONS
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 if (UNIX AND NOT APPLE)
-	set(CMAKE_CXX_FLAGS "-lstdc++fs")
+	set(FSLIB_STATIC "/usr/lib/gcc/x86_64-linux-gnu/5/libstdc++fs.a")
 endif()
+
 set(APP_DIR ${PROJECT_SOURCE_DIR})
 set(BIN_OUTPUT_DIR ${APP_DIR}/bin)
 message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME} (${CMAKE_SYSTEM_VERSION})")
@@ -40,10 +47,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BIN_OUTPUT_DIR})
 set(BIN_MSVC_PATH "C:/Qt/5.9.1/msvc2015/bin")
 message("The executable will be generated at ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-
-### COMPILATOR OPTIONS
-set(CMAKE_CXX_STANDARD 14)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Running moc/uic/rcc automatically
 set(CMAKE_AUTOMOC ON)
@@ -98,7 +101,14 @@ add_executable(${APP_NAME}
   ${UIS_HDRS}
 )
 
-# LIBRARIES LINKING
+### LIBRARIES LINKING
+# STDC++FS (ONLY IN UNIX)
+if (UNIX AND NOT APPLE)
+	add_library(stdc++fs UNKNOWN IMPORTED)
+	set_property(TARGET stdc++fs PROPERTY IMPORTED_LOCATION ${FSLIB_STATIC})
+	target_link_libraries(${APP_NAME} stdc++fs)
+endif()
+# QT
 target_link_libraries(${APP_NAME} Qt5::Widgets)
 
 # Windows specific build steps
