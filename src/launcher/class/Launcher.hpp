@@ -11,14 +11,22 @@ namespace nx {
 	class Launcher
 	{
 	public:
-		Launcher();
+		Launcher(int, char**);
 		~Launcher();
 
 	public:
 		const std::vector<std::shared_ptr<nx::SystemTpl>>& getSystems(void) const;
 		const std::shared_ptr<nx::SystemTpl>& getSystemByName(const std::string&) const;
+		int run(void);
+		int& getArgc(void) const;
+		char** getArgv(void) const;
 
 	private:
+		void init(void);
+
+	private:
+		int&	 	_argc;
+		char**		_argv;
 		std::vector<std::shared_ptr<nx::SystemTpl>>	_systems;
 
 	};

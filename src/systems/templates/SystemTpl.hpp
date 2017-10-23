@@ -4,17 +4,23 @@
 #include <string>
 
 namespace nx {
+	class Launcher;
+}
+
+namespace nx {
 	class SystemTpl
 	{
 	public:
-		SystemTpl(const std::string& name) : _name(name) {};
+		SystemTpl(nx::Launcher& launcher, const std::string& name) : _root(launcher), _name(name) {};
 		virtual ~SystemTpl() {};
 
 	public:
 		virtual void				init(void) = 0;
+		virtual int					run(void) = 0;
 		virtual const std::string&	getName(void) const { return this->_name; }
 
 	protected:
+		nx::Launcher&				_root;		
 		const std::string			_name;
 	};
 }

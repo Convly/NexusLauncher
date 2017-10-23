@@ -1,11 +1,9 @@
 #include <iostream>
 #include "Launcher.hpp"
 
-int main()
+int main(int ac, char **av)
 {
 
-	nx::Launcher launcher;
-
-	std::cout << launcher.getSystemByName("ui")->getName() << std::endl;
-	return (0);
+	nx::Launcher launcher(ac, av);
+	return launcher.run();
 }
