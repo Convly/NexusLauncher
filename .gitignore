@@ -21,7 +21,6 @@
 *.smod
 
 # Directories
-build/
 bin/
 
 # Compiled Static libraries

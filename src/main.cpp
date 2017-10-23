@@ -3,7 +3,11 @@
 
 int main(int ac, char **av)
 {
-
-	nx::Launcher launcher(ac, av);
-	return launcher.run();
+	try {
+		nx::Launcher launcher(ac, av);
+		return launcher.run();
+	} catch (...) {
+		std::cerr << "Unexpected error" << std::endl;
+		return -1;
+	}
 }

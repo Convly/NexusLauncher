@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 
+#include "SystemNotFoundException.hpp"
 #include "SystemTpl.hpp"
 #include "UISystem.hpp"
 

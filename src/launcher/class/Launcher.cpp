@@ -25,6 +25,8 @@ const std::shared_ptr<nx::SystemTpl>& nx::Launcher::getSystemByName(const std::s
 		if (it->getName() == target)
 			return it;
 	}
+
+	throw nx::SystemNotFoundException(target + std::string(" not found"));
 }
 
 int& nx::Launcher::getArgc() const
