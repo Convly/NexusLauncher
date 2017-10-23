@@ -2,9 +2,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <memory>
 
 namespace Ui {
-class MainWindow;
+	class MainWindow;
+}
+
+namespace nx {
+	class UISystem;
 }
 
 class MainWindow : public QMainWindow
@@ -12,11 +17,12 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent, nx::UISystem &uiSystem);
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+	std::shared_ptr<Ui::MainWindow>	_ui;
+	nx::UISystem					&_uiSystem;
 };
 
 #endif // MAINWINDOW_H
