@@ -5,21 +5,27 @@ cmake_minimum_required(VERSION 2.8.11)
 set(APP_NAME "NexusLauncher")
 project(${APP_NAME})
 
+### USEFUL VARIABLES
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(APP_DIR ${PROJECT_SOURCE_DIR})
+set(BIN_OUTPUT_DIR ${APP_DIR}/bin)
+message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME} (${CMAKE_SYSTEM_VERSION})")
+
 ### HEADERS FILES
-# include_directories(
-#	${APP_DIR}/path/to/include
-# )
+include_directories(
+  # --- SYSTEMS
+	${APP_DIR}/src/systems/templates
+  ${APP_DIR}/src/systems/class/UISystem/
+  # --- LAUNCHER
+  ${APP_DIR}/src/launcher/class/
+  # --- ERRORS
+  ${APP_DIR}/src/standalone/errors/class/
+)
 
 # Enable debug symbols by default
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
 endif()
-
-### USEFUL VARIABLES
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(APP_DIR ${CMAKE_SOURCE_DIR})
-set(BIN_OUTPUT_DIR ${APP_DIR}/bin)
-message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME} (${CMAKE_SYSTEM_VERSION})")
 
 ### APP TARGET
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR})
@@ -59,13 +65,13 @@ find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 include_directories(${Qt5Network_INCLUDE_DIRS} ${Qt5Widgets_INCLUDE_DIRS})
 
 ### APP SRCS
-file(GLOB_RECURSE SOURCE_LAUNCHER_FILES		  ${APP_DIR}/src/*.cpp)
+file(GLOB_RECURSE SOURCE_LAUNCHER_FILES			${APP_DIR}/src/*.cpp)
 file(GLOB_RECURSE SOURCE_LAUNCHER_FILES_H		${APP_DIR}/src/*.h)
-file(GLOB_RECURSE SOURCE_LAUNCHER_FILES_HPP	${APP_DIR}/src/*.hpp)
+file(GLOB_RECURSE SOURCE_LAUNCHER_FILES_HPP		${APP_DIR}/src/*.hpp)
 
 # APP HEADERS
 file(GLOB_RECURSE HEADER_LAUNCHER_FILES_H		${APP_DIR}/include/*.h)
-file(GLOB_RECURSE HEADER_LAUNCHER_FILES_HPP	${APP_DIR}/include/*.hpp)
+file(GLOB_RECURSE HEADER_LAUNCHER_FILES_HPP		${APP_DIR}/include/*.hpp)
 
 # APP FORMS UI
 ## All *.ui file goes there as
