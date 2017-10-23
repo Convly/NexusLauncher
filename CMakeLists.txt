@@ -11,6 +11,9 @@ project(${APP_NAME})
 
 ### USEFUL VARIABLES
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+if (UNIX AND NOT APPLE)
+	set(CMAKE_CXX_FLAGS "-lstdc++fs")
+endif()
 set(APP_DIR ${PROJECT_SOURCE_DIR})
 set(BIN_OUTPUT_DIR ${APP_DIR}/bin)
 message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME} (${CMAKE_SYSTEM_VERSION})")
