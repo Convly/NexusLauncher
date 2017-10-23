@@ -1,3 +1,7 @@
+### if your installation path are customized, please indicate them through the following vars
+### --> (BIN_MSVC_PATH) default =  "C:/Qt/5.9.1/msvc2015/bin"
+#
+
 ### GENERAL SETTINGS
 cmake_minimum_required(VERSION 2.8.11)
 
@@ -31,6 +35,7 @@ endif()
 ### APP TARGET
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BIN_OUTPUT_DIR})
+set(BIN_MSVC_PATH "C:/Qt/5.9.1/msvc2015/bin")
 message("The executable will be generated at ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 ### COMPILATOR OPTIONS
@@ -96,7 +101,10 @@ target_link_libraries(${APP_NAME} Qt5::Widgets)
 # Windows specific build steps
 if(WIN32)
 	file(GLOB_RECURSE DLL_LIB_FILES ${PROJECT_SOURCE_DIR}/lib/win/dll/*.dll)
-  if (DLL_LIB_FILES)
-    add_custom_command(TARGET ${APP_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${DLL_LIB_FILES} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-  endif()
+	if (DLL_LIB_FILES)
+		add_custom_command(TARGET ${APP_NAME} POST_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${DLL_LIB_FILES} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
+	endif()
+	# Run winddeployqt if it can be found
+	find_program(WINDEPLOYQT_EXECUTABLE NAMES windeployqt HINTS ${BIN_MSVC_PATH})
+	add_custom_command(TARGET ${APP_NAME} POST_BUILD COMMAND ${WINDEPLOYQT_EXECUTABLE} $<TARGET_FILE:${APP_NAME}>)
 endif()
