@@ -1,11 +1,11 @@
 #ifndef NEXUS_LAUNCHER_CORE_LAUNCHER_HPP_
 #define NEXUS_LAUNCHER_CORE_LAUNCHER_HPP_
 
-#include "SystemTpl.hpp"
-#include "UISystem.hpp"
-
 #include <memory>
 #include <vector>
+
+#include "SystemTpl.hpp"
+#include "UISystem.hpp"
 
 namespace nx {
 	class Launcher
