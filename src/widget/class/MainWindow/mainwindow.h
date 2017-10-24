@@ -3,6 +3,10 @@
 
 #include <QMainWindow>
 #include <memory>
+#include <unordered_map>
+#include <string>
+#include <QPropertyAnimation>
+#include "InteractiveLabel.hpp"
 
 namespace Ui {
 	class MainWindow;
@@ -21,8 +25,27 @@ public:
     ~MainWindow();
 
 private:
-	std::shared_ptr<Ui::MainWindow>	_ui;
-	nx::UISystem					&_uiSystem;
+	bool _initListWidgets();
+	bool _initAnimators();
+	bool _displayNexusLogo();
+	bool _displayInteractiveLabels();
+
+	bool _init();
+
+public slots:
+	void GamesLabelClicked();
+	void StoreLabelClicked();
+	void GamesLabelEntered();
+	void StoreLabelEntered();
+	void GamesLabelLeft();
+	void StoreLabelLeft();
+
+private:
+	std::shared_ptr<Ui::MainWindow>								_ui;
+	std::unordered_map<std::string, std::shared_ptr<QWidget>>	_listWidgets;
+	nx::UISystem												&_uiSystem;
+	std::shared_ptr<QPropertyAnimation>							_gamesLabelAnim;
+	std::shared_ptr<QPropertyAnimation>							_storeLabelAnim;
 };
 
 #endif // MAINWINDOW_H
