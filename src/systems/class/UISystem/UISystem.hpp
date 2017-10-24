@@ -17,12 +17,12 @@ namespace nx {
 		virtual void				init(void);
 		virtual int					run(void);
 
-		int const					showWindow(std::string const& windowName);
-		int const					hideWindow(std::string const& windowName);
+		int const					showWidget(std::string const& widgetName);
+		int const					hideWidget(std::string const& widgetName);
 
 	private:
 		QApplication												_app;
-		std::unordered_map<std::string, std::shared_ptr<QWidget>>   _windowList;
+		std::unordered_map<std::string, std::shared_ptr<QWidget>>   _widgetList;
 
 	};
 }

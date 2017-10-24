@@ -5,7 +5,7 @@ nx::UISystem::UISystem(nx::Launcher& root)
 :
 	SystemTpl(root, "ui"),
 	_app(this->_root.getArgc(), this->_root.getArgv()),
-	_windowList({
+	_widgetList({
 		{ "MainWindow", std::make_shared<MainWindow>(nullptr, *this) }
 	})
 {
@@ -17,25 +17,27 @@ nx::UISystem::~UISystem()
 
 }
 
-int const										nx::UISystem::showWindow(std::string const& windowName)
+// Showing widget by its name
+int const										nx::UISystem::showWidget(std::string const& widgetName)
 {
-	if (this->_windowList.find(windowName) == this->_windowList.end())
+	if (this->_widgetList.find(widgetName) == this->_widgetList.end())
 		return (1);
-	this->_windowList[windowName]->show();
+	this->_widgetList[widgetName]->show();
 	return (0);
 }
 
-int const										nx::UISystem::hideWindow(std::string const& windowName)
+// Hiding widget by its name
+int const										nx::UISystem::hideWidget(std::string const& widgetName)
 {
-	if (this->_windowList.find(windowName) == this->_windowList.end())
+	if (this->_widgetList.find(widgetName) == this->_widgetList.end())
 		return (1);
-	this->_windowList[windowName]->hide();
+	this->_widgetList[widgetName]->hide();
 	return (0);
 }
 
 void nx::UISystem::init()
 {
-	this->showWindow("MainWindow");
+	this->showWidget("MainWindow");
 }
 
 int nx::UISystem::run()
