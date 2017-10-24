@@ -35,9 +35,10 @@ int const										nx::UISystem::hideWidget(std::string const& widgetName)
 	return (0);
 }
 
+// Initialize all widgets
 void nx::UISystem::init()
 {
-	this->showWidget("MainWindow");
+
 }
 
 int nx::UISystem::run()

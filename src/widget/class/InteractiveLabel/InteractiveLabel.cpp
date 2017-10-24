@@ -14,27 +14,27 @@ InteractiveLabel::~InteractiveLabel()
 	
 }
 
-void InteractiveLabel::setColor(QColor color)
+void			InteractiveLabel::setColor(QColor const &color)
 {
 	this->setStyleSheet(QString("color: rgba(%1, %2, %3, %4);").arg(color.red()).arg(color.green()).arg(color.blue()).arg(color.alpha()));
 }
 
-QColor InteractiveLabel::getColor()
+const QColor	&InteractiveLabel::getColor() const
 {
 	return (this->palette().color(QPalette::Window));
 }
 
-void InteractiveLabel::mousePressEvent(QMouseEvent *)
+void			InteractiveLabel::mousePressEvent(QMouseEvent *)
 {
 	emit clicked();
 }
 
-void InteractiveLabel::enterEvent(QEvent *)
+void			InteractiveLabel::enterEvent(QEvent *)
 {
 	emit entered();
 }
 
-void InteractiveLabel::leaveEvent(QEvent *)
+void			InteractiveLabel::leaveEvent(QEvent *)
 {
 	emit left();
 }

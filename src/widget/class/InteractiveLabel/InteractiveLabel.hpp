@@ -14,8 +14,8 @@ public:
 	InteractiveLabel(QWidget *parent, std::string const& label, int const fontSize);
 	~InteractiveLabel();
 
-	void	setColor(QColor color);
-	QColor	getColor();
+	void			setColor(QColor const& color);
+	const QColor	&getColor() const;
 
 signals:
 	void	clicked();

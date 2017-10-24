@@ -24,6 +24,14 @@ public:
     explicit MainWindow(QWidget *parent, nx::UISystem &uiSystem);
     ~MainWindow();
 
+private:
+	bool _initListWidgets();
+	bool _initAnimators();
+	bool _displayNexusLogo();
+	bool _displayInteractiveLabels();
+
+	bool _init();
+
 public slots:
 	void GamesLabelClicked();
 	void StoreLabelClicked();
