@@ -9,7 +9,7 @@ cmake_minimum_required(VERSION 2.8.11)
 # Create project
 set(APP_NAME "NexusLauncher")
 project(${APP_NAME})
-
+ 
 ### USEFUL VARIABLES
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -27,7 +27,9 @@ message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME
 
 ### HEADERS FILES
 include_directories(
+  	# --- WIDGETS
     ${APP_DIR}/src/widget/class/MainWindow
+    ${APP_DIR}/src/widget/class/InteractiveLabel
   	# --- SYSTEMS
 	${APP_DIR}/src/systems/templates
 	${APP_DIR}/src/systems/class/UISystem/
