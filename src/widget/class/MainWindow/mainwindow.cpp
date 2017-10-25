@@ -71,11 +71,13 @@ bool MainWindow::addGameToGamesList(std::string const& picPath, std::string cons
 
 bool MainWindow::removeGameFromGamesList(std::string const& gameName)
 {
+	// TODO: Removing an item from the list
 	return (true);
 }
 
 bool MainWindow::clearGamesList()
 {
+	// TODO: Clearing all items from the list
 	return (true);
 }
 
