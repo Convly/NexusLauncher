@@ -39,7 +39,7 @@ namespace nx {
 	
 		std::unordered_map<nx::Crawler::ENTRY_TYPE, std::function<bool(fs::path)>, EnumClassHash> entryTypeModifier = 
 		{
-			{nx::Crawler::ENTRY_TYPE::ANY,              [](const fs::path& p) {return true;}},
+			{nx::Crawler::ENTRY_TYPE::ANY,              [](const fs::path& p) {return fs::exists(p);}},
 			{nx::Crawler::ENTRY_TYPE::BLOCK_FILE,       [](const fs::path& p) {return fs::is_block_file(p);}},
 			{nx::Crawler::ENTRY_TYPE::CHARACTER_FILE,   [](const fs::path& p) {return fs::is_character_file(p);}},
 			{nx::Crawler::ENTRY_TYPE::DIRECTORY,        [](const fs::path& p) {return fs::is_directory(p);}},
