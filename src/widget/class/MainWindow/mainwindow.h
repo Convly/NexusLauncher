@@ -25,7 +25,7 @@ class MainWindow : public QMainWindow
 
 	struct GameWidgetItemStruct
 	{
-		GameWidgetItemStruct() {}
+		GameWidgetItemStruct() : nxItem(nullptr), qtItem(nullptr) {}
 		GameWidgetItemStruct(std::shared_ptr<NGameWidgetItem> nItem, std::shared_ptr<QListWidgetItem> qItem) :
 			nxItem(nItem), qtItem(qItem) {}
 		~GameWidgetItemStruct() {}

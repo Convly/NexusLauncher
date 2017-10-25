@@ -83,10 +83,7 @@ bool MainWindow::clearGamesList()
 
 void MainWindow::mousePressEvent(QMouseEvent *evt)
 {
-	if (evt->localPos().y() <= 35)
-		this->_oldMovingPos = evt->globalPos();
-	else
-		this->_oldMovingPos = QPointF(-1, -1);
+	this->_oldMovingPos = (evt->localPos().y() <= 35) ? evt->globalPos() : QPointF(-1, -1);
 }
 
 void MainWindow::mouseMoveEvent(QMouseEvent *evt)
