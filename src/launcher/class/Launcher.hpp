@@ -3,10 +3,13 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
 
 #include "SystemNotFoundException.hpp"
+#include "SystemInitException.hpp"
 #include "SystemTpl.hpp"
 #include "UISystem.hpp"
+#include "GamesSystem.hpp"
 
 namespace nx {
 	class Launcher
@@ -23,7 +26,7 @@ namespace nx {
 		char** getArgv(void) const;
 
 	private:
-		void init(void);
+		bool init(void);
 
 	private:
 		int&	 	_argc;

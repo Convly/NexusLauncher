@@ -5,7 +5,8 @@ nx::Launcher::Launcher(int ac, char** av)
 	_argc(ac),
 	_argv(av),
 	_systems({
-		std::make_shared<nx::UISystem>(*this)
+		std::make_shared<nx::UISystem>(*this),
+		std::make_shared<nx::GamesSystem>(*this)
 	})
 {
 }
@@ -39,16 +40,23 @@ char** nx::Launcher::getArgv() const
 	return this->_argv;
 }
 
-void nx::Launcher::init()
+bool nx::Launcher::init()
 {
 	for (auto& it : this->_systems) {
-		it->init();
+		try {
+			it->init();
+		} catch (const nx::SystemInitException e) {
+			std::cerr << e.what() << std::endl;
+			return false;
+		}
 	}
+	return true;
 }
 
 int nx::Launcher::run()
 {
-	this->init();
+	if (!this->init())
+		return EXIT_FAILURE;
 
 	for (auto & it : this->_systems) {
 		if (it->getName() != "ui") {

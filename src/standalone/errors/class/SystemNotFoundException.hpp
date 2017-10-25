@@ -10,9 +10,7 @@ namespace nx {
 		protected:
 			std::string _msg;
 		public:
-
-			explicit SystemNotFoundException(const char* message):			_msg(std::string("System Not Found: ") + message)	{}
-			explicit SystemNotFoundException (const std::string& message):	_msg(message)	{}
+			SystemNotFoundException (const std::string& systemName):	_msg(std::string("System ") + systemName + std::string(" not found!"))	{}
 	
 			virtual ~SystemNotFoundException () throw () {}
 
