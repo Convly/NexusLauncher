@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "SystemInitException.hpp"
+
 namespace nx {
 	class Launcher;
 }
