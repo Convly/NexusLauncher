@@ -28,13 +28,16 @@ message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME
 ### HEADERS FILES
 include_directories(
     ${APP_DIR}/src/widget/class/MainWindow
-  # --- SYSTEMS
+  	# --- SYSTEMS
 	${APP_DIR}/src/systems/templates
 	${APP_DIR}/src/systems/class/UISystem/
-  # --- LAUNCHER
+	${APP_DIR}/src/systems/class/GamesSystem/
+  	# --- LAUNCHER
 	${APP_DIR}/src/launcher/class/
-  # --- ERRORS
+  	# --- ERRORS
 	${APP_DIR}/src/standalone/errors/class/
+	# --- CRAWLER
+	${APP_DIR}/src/standalone/crawler/class/
 )
 
 # Enable debug symbols by default
