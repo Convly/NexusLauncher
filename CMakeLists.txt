@@ -18,8 +18,9 @@ message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME
 ### HEADERS FILES
 include_directories(
   # --- WIDGETS
-    ${APP_DIR}/src/widget/class/MainWindow
-    ${APP_DIR}/src/widget/class/InteractiveLabel
+	${APP_DIR}/src/widget/class/MainWindow
+	${APP_DIR}/src/widget/class/InteractiveLabel
+	${APP_DIR}/src/widget/class/NGameWidgetItem
   # --- SYSTEMS
 	${APP_DIR}/src/systems/templates
 	${APP_DIR}/src/systems/class/UISystem/
@@ -85,6 +86,7 @@ file(GLOB_RECURSE HEADER_LAUNCHER_FILES_HPP		${APP_DIR}/include/*.hpp)
 ## All *.ui file goes there as
 qt5_wrap_ui(UIS_HDRS
     ${APP_DIR}/src/widget/class/MainWindow/mainwindow.ui
+    ${APP_DIR}/src/widget/class/NGameWidgetItem/ngamewidgetitem.ui
 )
 
 ### EXECUTABLE
