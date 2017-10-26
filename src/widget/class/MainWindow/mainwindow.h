@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QPropertyAnimation>
 #include <QMouseEvent>
+#include <QTimer>
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
 #include "ngamewidgetitem.h"
@@ -55,6 +56,7 @@ private:
 	bool _init();
 
 public slots:
+	void UpdateGamesList();
 	void GamesLabelClicked();
 	void StoreLabelClicked();
 	void GamesLabelEntered();
@@ -71,6 +73,7 @@ private:
 	std::unordered_map<std::string, GameWidgetItemStruct>				_gameWidgetItemsList;
 
 	QPointF																_oldMovingPos;
+	std::shared_ptr<QTimer>												_timer;
 };
 
 #endif // MAINWINDOW_H
