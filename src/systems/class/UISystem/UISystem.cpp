@@ -1,4 +1,5 @@
 #include "UISystem.hpp"
+#include "GamesSystem.hpp"
 #include "Launcher.hpp"
 
 nx::UISystem::UISystem(nx::Launcher& root)
@@ -33,6 +34,12 @@ int const										nx::UISystem::hideWidget(std::string const& widgetName)
 		return (1);
 	this->_widgetList[widgetName]->hide();
 	return (0);
+}
+
+// Get GamesSystem object
+nx::GamesSystem* nx::UISystem::getGameSystem()
+{
+	return dynamic_cast<nx::GamesSystem*>(this->getRoot().getSystemByName("games").get());
 }
 
 // Initialize all widgets
