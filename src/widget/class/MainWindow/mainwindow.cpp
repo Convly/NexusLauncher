@@ -60,7 +60,7 @@ MainWindow::~MainWindow()
 |*  PUBLIC METHODS  *|
 \********************/
 
-
+// Add a NGameWidgetItem in the GamesList
 bool MainWindow::addGameToGamesList(std::string const& picPath, std::string const& gameName)
 {
 	if (this->_gameWidgetItemsList.find(gameName) == this->_gameWidgetItemsList.end())
@@ -76,18 +76,22 @@ bool MainWindow::addGameToGamesList(std::string const& picPath, std::string cons
 	return (true);
 }
 
+// Remove a NGameWidgetItem by its name in the GamesList
 bool MainWindow::removeGameFromGamesList(std::string const& gameName)
 {
-	// TODO: Removing an item from the list
+	if (this->_gameWidgetItemsList.find(gameName) != this->_gameWidgetItemsList.end())
+		this->_gameWidgetItemsList.erase(gameName);
 	return (true);
 }
 
+// Clear the entire GamesList
 bool MainWindow::clearGamesList()
 {
-	// TODO: Clearing all items from the list
+	this->_gameWidgetItemsList.clear();
 	return (true);
 }
 
+// Moving mouse event to move the MainWindow
 void MainWindow::mousePressEvent(QMouseEvent *evt)
 {
 	this->_oldMovingPos = (evt->localPos().y() <= 35) ? evt->globalPos() : QPointF(-1, -1);
@@ -171,6 +175,7 @@ void MainWindow::StoreLabelLeft()
 \*********************/
 
 
+// Initialize everything in the MainWindow
 bool MainWindow::_init()
 {
 	this->_initListWidgets();
