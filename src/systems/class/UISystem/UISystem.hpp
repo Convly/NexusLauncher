@@ -24,7 +24,7 @@ namespace nx {
 		int const					showWidget(std::string const& widgetName);
 		int const					hideWidget(std::string const& widgetName);
 
-		nx::GamesSystem* getGameSystem();
+		nx::GamesSystem*			getGameSystem();
 
 	private:
 		QApplication												_app;
