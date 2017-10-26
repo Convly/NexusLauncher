@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "UISystem.hpp"
+#include "GamesSystem.hpp"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
@@ -109,7 +110,7 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 // Triggered every second
 void MainWindow::UpdateGamesList()
 {
-
+	this->_uiSystem.getGameSystem()->update();
 }
 
 // Triggered when the GAMES label is clicked

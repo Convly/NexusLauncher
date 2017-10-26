@@ -43,6 +43,8 @@ const std::vector<nx::GameInfos>& nx::GamesSystem::update()
 
 	auto dirs = this->_crawler.getDirectoriesListByPath(this->_gamesPath);
 
+	std::cout << "Update called" << std::endl;
+
 	return this->_games;
 }
 
