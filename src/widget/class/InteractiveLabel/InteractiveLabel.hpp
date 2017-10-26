@@ -11,7 +11,7 @@ class InteractiveLabel : public QLabel {
 	Q_PROPERTY(QColor color READ getColor WRITE setColor)
 
 public:
-	InteractiveLabel(QWidget *parent, std::string const& label, int const fontSize);
+	InteractiveLabel(QWidget *parent, std::string const& label = "", int const fontSize = 0);
 	~InteractiveLabel();
 
 	void			setColor(QColor const& color);
