@@ -5,7 +5,7 @@ nx::GamesSystem::GamesSystem(nx::Launcher& root)
 :
 	SystemTpl(root, "games"),
 	_binaryPath(fs::absolute(fs::path(root.getArgv()[0]).parent_path())),
-	_crawler(this->_binaryPath, true)
+	_crawler(this->_binaryPath)
 {
 
 }
@@ -43,7 +43,16 @@ const std::vector<nx::GameInfos>& nx::GamesSystem::update()
 
 	auto dirs = this->_crawler.getDirectoriesListByPath(this->_gamesPath);
 
-	std::cout << "Update called" << std::endl;
+	for (const auto it : dirs) {
+		auto ret = this->is_validGameDirectory(it);
+		if (ret.first) {
+			try {
+				this->_games.push_back(nx::GameInfos(ret.second));
+			} catch (const nx::BadFormatGameJSONException e) {
+				std::cerr << e.what() << std::endl;
+			}
+		}
+	}
 
 	return this->_games;
 }
@@ -51,17 +60,22 @@ const std::vector<nx::GameInfos>& nx::GamesSystem::update()
 const std::pair<bool, fs::path> nx::GamesSystem::is_launcherArchValid()
 {
 	auto dirs = this->_crawler.getDirectoriesList();
-	auto it = std::find_if(dirs.begin(), dirs.end(), [&](auto & item){return item.filename() == "games";});
+
+	auto it = std::find_if(dirs.begin(), dirs.end(), [&](auto & item){return item.filename() == NX_GAMES_DIR;});
 	bool valid = (it != dirs.end());
-	return std::pair<bool, fs::path>(valid, (valid)? *it: "");;
+
+	return std::pair<bool, fs::path>(valid, (valid)? *it: "");
 }
 
-bool nx::GamesSystem::is_validGameDirectory(const std::string& dir)
+const std::pair<bool, fs::path> nx::GamesSystem::is_validGameDirectory(const std::string& dir)
 {
-	return true;
-}
+	auto entries = this->_crawler.getEntriesListByTypeAndPath(nx::Crawler::ENTRY_TYPE::REGULAR, dir);
 
-bool nx::GamesSystem::is_validGameConfiguration(const std::string& dir)
-{
-	return true;
+	auto it = std::find_if(entries.begin(), entries.end(), [&](auto & item){return item.filename() == NX_GAMES_CONF_FILE;});
+	bool valid = (it != entries.end());
+	
+	if (!valid)
+		return std::pair<bool, fs::path>(false, "");
+
+	return std::pair<bool, fs::path>(valid, *it);
 }
