@@ -4,7 +4,7 @@
 nx::GamesSystem::GamesSystem(nx::Launcher& root)
 :
 	SystemTpl(root, "games"),
-	_binaryPath(fs::absolute(fs::path(root.getArgv()[0]).parent_path())),
+	_binaryPath(fs::absolute(fs::path(root.getArgv()[0]).parent_path()).string()),
 	_crawler(this->_binaryPath)
 {
 
@@ -22,7 +22,7 @@ void nx::GamesSystem::init()
 		throw nx::SystemInitException(this->getName(), std::string("Cannot find 'games' directory in ") + this->_binaryPath);
 	}
 
-	this->_gamesPath = ret.second;
+	this->_gamesPath = ret.second.string();
 	this->update();
 }
 
@@ -44,10 +44,10 @@ const std::vector<nx::GameInfos>& nx::GamesSystem::update()
 	auto dirs = this->_crawler.getDirectoriesListByPath(this->_gamesPath);
 
 	for (const auto it : dirs) {
-		auto ret = this->is_validGameDirectory(it);
+		auto ret = this->is_validGameDirectory(it.string());
 		if (ret.first) {
 			try {
-				this->_games.push_back(nx::GameInfos(ret.second));
+				this->_games.push_back(nx::GameInfos(ret.second.string()));
 			} catch (const nx::BadFormatGameJSONException e) {
 				std::cerr << e.what() << std::endl;
 			}
