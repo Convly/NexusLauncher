@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <iomanip>
 #include <iostream>
 #include <experimental/filesystem>
 #include <unordered_map>
@@ -55,6 +56,7 @@ namespace nx {
 		virtual ~Crawler();
 
 	public:
+		void setPath(const std::string&);
 		const std::string& getPath(void) const;
 		const std::vector<fs::path>& getEntries(void);
 		const std::vector<fs::path>& getSearch(void) const;
@@ -74,11 +76,11 @@ namespace nx {
 
 	private:
 		bool archiveSearch(const nx::Crawler::ENTRY_TYPE = nx::Crawler::ENTRY_TYPE::ANY);
-		void displayEntriesList(const std::vector<fs::path>&, const std::string& header = "NEW ENTRIES LIST") const;
+		void displayEntriesList(const std::vector<fs::path>& entries, const nx::Crawler::ENTRY_TYPE& type, const fs::path& path, const std::string& header = "NEW ENTRIES LIST") const;
 
 	private:
 		bool																	_log;
-		const std::string                   									_path;
+		std::string		                   										_path;
 		std::vector<fs::path>                                            		_search;
 		std::vector<std::pair<nx::Crawler::ENTRY_TYPE, std::vector<fs::path>>>  _searchHistory;
 		std::vector<fs::path>               									_entries;

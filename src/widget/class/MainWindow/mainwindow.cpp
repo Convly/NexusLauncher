@@ -1,11 +1,13 @@
 #include "mainwindow.h"
 #include "UISystem.hpp"
+#include "GamesSystem.hpp"
 #include "ui_mainwindow.h"
 
 MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QMainWindow(parent, Qt::FramelessWindowHint),
 	_ui(std::make_shared<Ui::MainWindow>()),
-	_uiSystem(uiSystem)
+	_uiSystem(uiSystem),
+	_timer(std::make_shared<QTimer>(this))
 {
 	this->_ui->setupUi(this);
 
@@ -34,6 +36,10 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 		"    background: none;"
 		"}"
 	));
+
+	// Update every 1 second the GamesList
+	this->_timer->start(1000);
+	QObject::connect(this->_timer.get(), SIGNAL(timeout()), this, SLOT(UpdateGamesList()));
 
 	// Signal functions call
 	QObject::connect(this->_listWidgets["GamesLabel"].get(), SIGNAL(clicked()), this, SLOT(GamesLabelClicked()));
@@ -106,6 +112,11 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 |*  SIGNALS  *|
 \*************/
 
+// Triggered every second
+void MainWindow::UpdateGamesList()
+{
+	this->_uiSystem.getGameSystem()->update();
+}
 
 // Triggered when the GAMES label is clicked
 void MainWindow::GamesLabelClicked()

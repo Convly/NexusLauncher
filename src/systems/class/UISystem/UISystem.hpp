@@ -7,6 +7,10 @@
 #include "mainwindow.h"
 
 namespace nx {
+	class GamesSystem;
+}
+
+namespace nx {
 	class UISystem : public nx::SystemTpl
 	{
 	public:
@@ -19,6 +23,8 @@ namespace nx {
 
 		int const					showWidget(std::string const& widgetName);
 		int const					hideWidget(std::string const& widgetName);
+
+		nx::GamesSystem*			getGameSystem();
 
 	private:
 		QApplication												_app;
