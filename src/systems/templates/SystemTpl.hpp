@@ -20,6 +20,7 @@ namespace nx {
 		virtual void				init(void) = 0;
 		virtual int					run(void) = 0;
 		virtual const std::string&	getName(void) const { return this->_name; }
+		virtual const nx::Launcher&	getRoot(void) const { return this->_root; }
 
 	protected:
 		nx::Launcher&				_root;		
