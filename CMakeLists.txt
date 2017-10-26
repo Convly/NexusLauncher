@@ -41,6 +41,8 @@ include_directories(
 	${APP_DIR}/src/standalone/errors/class/
 	# --- CRAWLER
 	${APP_DIR}/src/standalone/crawler/class/
+	# --- GAMEINFOS
+	${APP_DIR}/src/standalone/GameInfos/class/
 )
 
 # Enable debug symbols by default
