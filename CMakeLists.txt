@@ -27,12 +27,14 @@ message("Starting generation for ${APP_NAME} in ${APP_DIR} - ${CMAKE_SYSTEM_NAME
 
 ### HEADERS FILES
 include_directories(
+	# --- RAPIDJSON LIB
+	${APP_DIR}/include/
   	# --- WIDGETS
     ${APP_DIR}/src/widget/class/MainWindow
     ${APP_DIR}/src/widget/class/InteractiveLabel
 	${APP_DIR}/src/widget/class/NGameWidgetItem
   	# --- SYSTEMS
-	${APP_DIR}/src/systems/templates
+	${APP_DIR}/src/systems/templates	
 	${APP_DIR}/src/systems/class/UISystem/
 	${APP_DIR}/src/systems/class/GamesSystem/
   	# --- LAUNCHER
