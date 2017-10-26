@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QPropertyAnimation>
 #include <QMouseEvent>
+#include <QPainter>
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
 #include "ngamewidgetitem.h"
@@ -49,17 +50,18 @@ private:
 	bool _initListWidgets();
 	bool _initAnimators();
 	bool _displayNexusLogo();
+	bool _displayCloseIcon();
 	bool _displayInteractiveLabels();
 	bool _loadGamesList();
 
 	bool _init();
 
 public slots:
-	void GamesLabelClicked();
-	void StoreLabelClicked();
 	void GamesLabelEntered();
-	void StoreLabelEntered();
+	void GamesLabelClicked();
 	void GamesLabelLeft();
+	void StoreLabelClicked();
+	void StoreLabelEntered();
 	void StoreLabelLeft();
 
 private:

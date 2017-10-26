@@ -37,11 +37,12 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 
 	// Signal functions call
 	QObject::connect(this->_listWidgets["GamesLabel"].get(), SIGNAL(clicked()), this, SLOT(GamesLabelClicked()));
-	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(clicked()), this, SLOT(StoreLabelClicked()));
 	QObject::connect(this->_listWidgets["GamesLabel"].get(), SIGNAL(entered()), this, SLOT(GamesLabelEntered()));
-	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["GamesLabel"].get(), SIGNAL(left()), this, SLOT(GamesLabelLeft()));
+	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(clicked()), this, SLOT(StoreLabelClicked()));
+	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
+	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), qApp, SLOT(quit()));
 }
 
 MainWindow::~MainWindow()
@@ -108,12 +109,6 @@ void MainWindow::GamesLabelClicked()
 
 }
 
-// Triggered when the STORE label is clicked
-void MainWindow::StoreLabelClicked()
-{
-
-}
-
 // Triggered when the mouse is entering the GAMES label
 void MainWindow::GamesLabelEntered()
 {
@@ -124,16 +119,6 @@ void MainWindow::GamesLabelEntered()
 	this->_listWidgets["GamesLabel"]->setCursor(Qt::PointingHandCursor);
 }
 
-// Triggered when the mouse is entering the STORE label
-void MainWindow::StoreLabelEntered()
-{
-	this->_storeLabelAnim->setDuration(250);
-	this->_storeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
-	this->_storeLabelAnim->setEndValue(QColor(255, 255, 255, 255));
-	this->_storeLabelAnim->start();
-	this->_listWidgets["StoreLabel"]->setCursor(Qt::PointingHandCursor);
-}
-
 // Triggered when the mouse is leaving the GAMES label
 void MainWindow::GamesLabelLeft()
 {
@@ -142,6 +127,22 @@ void MainWindow::GamesLabelLeft()
 	this->_gamesLabelAnim->setEndValue(QColor(255, 255, 255, 140));
 	this->_gamesLabelAnim->start();
 	this->_listWidgets["GamesLabel"]->setCursor(Qt::ArrowCursor);
+}
+
+// Triggered when the STORE label is clicked
+void MainWindow::StoreLabelClicked()
+{
+
+}
+
+// Triggered when the mouse is entering the STORE label
+void MainWindow::StoreLabelEntered()
+{
+	this->_storeLabelAnim->setDuration(250);
+	this->_storeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
+	this->_storeLabelAnim->setEndValue(QColor(255, 255, 255, 255));
+	this->_storeLabelAnim->start();
+	this->_listWidgets["StoreLabel"]->setCursor(Qt::PointingHandCursor);
 }
 
 // Triggered when the mouse is leaving the STORE label
@@ -163,7 +164,7 @@ bool MainWindow::_init()
 {
 	this->_initListWidgets();
 	this->_initAnimators();
-	if (!this->_displayNexusLogo() || !this->_displayInteractiveLabels())
+	if (!this->_displayNexusLogo() || !this->_displayCloseIcon() || !this->_displayInteractiveLabels())
 		return (false);
 	this->_loadGamesList();
 	this->show();
@@ -176,7 +177,8 @@ bool MainWindow::_initListWidgets()
 	this->_listWidgets = {
 		{ "LogoLabel", std::make_shared<QLabel>(this->_ui->NavBarFrame) },
 		{ "GamesLabel", std::make_shared<InteractiveLabel>(this->_ui->NavBarFrame, "GAMES", 12) },
-		{ "StoreLabel", std::make_shared<InteractiveLabel>(this->_ui->NavBarFrame, "STORE", 12) }
+		{ "StoreLabel", std::make_shared<InteractiveLabel>(this->_ui->NavBarFrame, "STORE", 12) },
+		{ "LogoClose", std::make_shared<InteractiveLabel>(this) }
 	};
 	return (true);
 }
@@ -202,6 +204,24 @@ bool MainWindow::_displayNexusLogo()
 	logo->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	logo->setPixmap(img.scaled(160, 90, Qt::KeepAspectRatio));
 	logo->setGeometry(8, 0, 160, 90);
+	return (true);
+}
+
+// Adding the Close icon
+bool MainWindow::_displayCloseIcon()
+{
+	InteractiveLabel *logo = dynamic_cast<InteractiveLabel *>(this->_listWidgets["LogoClose"].get());
+
+	if (!logo)
+		return (false);
+
+	QPixmap img("../ressources/images/icons/closeicon.png");
+
+	logo->setPixmap(img);
+	logo->setFixedSize(16, 90);
+	logo->setAlignment(Qt::AlignRight | Qt::AlignTop);
+
+	this->_ui->CloseLogoLayout->addWidget(logo);
 	return (true);
 }
 
