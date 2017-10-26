@@ -50,6 +50,7 @@ private:
 	bool _initListWidgets();
 	bool _initAnimators();
 	bool _displayNexusLogo();
+	bool _displayCloseIcon();
 	bool _displayInteractiveLabels();
 	bool _loadGamesList();
 
@@ -57,11 +58,11 @@ private:
 
 public slots:
 	void UpdateGamesList();
-	void GamesLabelClicked();
-	void StoreLabelClicked();
 	void GamesLabelEntered();
-	void StoreLabelEntered();
+	void GamesLabelClicked();
 	void GamesLabelLeft();
+	void StoreLabelClicked();
+	void StoreLabelEntered();
 	void StoreLabelLeft();
 
 private:
