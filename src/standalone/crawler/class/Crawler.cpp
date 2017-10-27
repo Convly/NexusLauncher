@@ -1,3 +1,8 @@
+/**
+ * @file Crawler.cpp
+ * @author JSX
+ */
+
 #include "Crawler.hpp"
 
 nx::Crawler::Crawler(const std::string& path, const bool log)
