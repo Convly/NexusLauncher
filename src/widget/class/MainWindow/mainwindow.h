@@ -8,6 +8,7 @@
 #include <QPropertyAnimation>
 #include <QMouseEvent>
 #include <QTimer>
+#include "GameInfos.hpp"
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
 #include "ngamewidgetitem.h"
@@ -27,10 +28,12 @@ class MainWindow : public QMainWindow
 	struct GameWidgetItemStruct
 	{
 		GameWidgetItemStruct() : nxItem(nullptr), qtItem(nullptr) {}
-		GameWidgetItemStruct(std::shared_ptr<NGameWidgetItem> nItem, std::shared_ptr<QListWidgetItem> qItem) :
-			nxItem(nItem), qtItem(qItem) {}
+		GameWidgetItemStruct(std::string const& cfgPath) : gameInfos(cfgPath), nxItem(nullptr), qtItem(nullptr) {}
+		GameWidgetItemStruct(std::string const& cfgPath, std::shared_ptr<NGameWidgetItem> nItem, std::shared_ptr<QListWidgetItem> qItem)
+		: gameInfos(cfgPath), nxItem(nItem), qtItem(qItem) {}
 		~GameWidgetItemStruct() {}
 
+		nx::GameInfos						gameInfos;
 		std::shared_ptr<NGameWidgetItem>	nxItem;
 		std::shared_ptr<QListWidgetItem>	qtItem;
 	};
@@ -39,9 +42,9 @@ public:
     explicit MainWindow(QWidget *parent, nx::UISystem &uiSystem);
     ~MainWindow();
 
-	bool addGameToGamesList(std::string const& picPath, std::string const& gameName);
-	bool removeGameFromGamesList(std::string const& gameName);
+	bool addGameToGamesList(nx::GameInfos const& gameInfos);
 	bool clearGamesList();
+	bool diffGamesListsData();
 
 	void mousePressEvent(QMouseEvent * evt);
 	void mouseMoveEvent(QMouseEvent * evt);
@@ -52,7 +55,6 @@ private:
 	bool _displayNexusLogo();
 	bool _displayCloseIcon();
 	bool _displayInteractiveLabels();
-	bool _loadGamesList();
 
 	bool _init();
 
@@ -72,6 +74,7 @@ private:
 	std::shared_ptr<QPropertyAnimation>									_gamesLabelAnim;
 	std::shared_ptr<QPropertyAnimation>									_storeLabelAnim;
 	std::unordered_map<std::string, GameWidgetItemStruct>				_gameWidgetItemsList;
+	std::vector<nx::GameInfos>											_gamesFound;
 
 	QPointF																_oldMovingPos;
 	std::shared_ptr<QTimer>												_timer;
