@@ -25,6 +25,7 @@
 # Directories
 build/
 bin/
+doc/output/*
 
 # Compiled Static libraries
 *.lai
