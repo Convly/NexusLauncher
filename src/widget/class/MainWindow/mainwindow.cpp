@@ -90,7 +90,7 @@ bool MainWindow::diffGamesListsData()
 {
 	for (auto it = this->_gameWidgetItemsList.begin(); it != this->_gameWidgetItemsList.end(); ++it)
 	{
-		bool missing = (std::find_if(this->_gamesFound.begin(), this->_gamesFound.end(), [&](auto i) {return i.getPath() == it->second.gameInfos.getPath(); }) == this->_gamesFound.end());
+		bool missing = (std::find_if(this->_gamesFound.begin(), this->_gamesFound.end(), [&](auto i) {return i == it->second.gameInfos; }) == this->_gamesFound.end());
 		if (missing) {
 			this->_gameWidgetItemsList.erase(it);
 			it = this->_gameWidgetItemsList.begin();
@@ -99,7 +99,7 @@ bool MainWindow::diffGamesListsData()
 
 	for (auto it = this->_gamesFound.begin(); it != this->_gamesFound.end(); ++it)
 	{
-		bool missing = (std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](auto i) {return i.second.gameInfos.getPath() == it->getPath(); }) == this->_gameWidgetItemsList.end());
+		bool missing = (std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](auto i) {return i.second.gameInfos == *it; }) == this->_gameWidgetItemsList.end());
 		if (missing) {
 			this->addGameToGamesList(*it);
 		}

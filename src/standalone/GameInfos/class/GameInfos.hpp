@@ -30,9 +30,12 @@ namespace nx {
 		GameInfos(const std::string& = ".");
 		virtual ~GameInfos();
 
+		bool operator==(nx::GameInfos& target);
+
 	public:
 		const std::string&									getPath(void) const;
 		const std::unordered_map<std::string, std::string>	getInfos(void) const;
+		std::unordered_map<std::string, std::string>	getInfos(void);
 		void dump(void) const;
 		void checkInfosIntegrity(void) const;
 		rapidjson::Document getJSONDocumentFromPath();		

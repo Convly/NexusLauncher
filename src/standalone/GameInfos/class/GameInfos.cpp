@@ -35,6 +35,22 @@ nx::GameInfos::~GameInfos()
 	
 }
 
+bool nx::GameInfos::operator==(nx::GameInfos& target)
+{
+	if (this->getPath() != target.getPath()) {
+		return false;
+	}
+
+	for (auto tag : nx::GameInfos::GameInfosAttrs) {
+		if (this->getInfos()[tag] != target.getInfos()[tag]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+
 // TOOLS
 
 rapidjson::Document nx::GameInfos::getJSONDocumentFromPath()
@@ -64,6 +80,11 @@ const std::string& nx::GameInfos::getPath() const
 }
 
 const std::unordered_map<std::string, std::string> nx::GameInfos::getInfos() const
+{
+	return this->_infos;
+}
+
+std::unordered_map<std::string, std::string> nx::GameInfos::getInfos()
 {
 	return this->_infos;
 }
