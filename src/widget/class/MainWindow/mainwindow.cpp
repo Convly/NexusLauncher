@@ -64,15 +64,17 @@ MainWindow::~MainWindow()
 bool MainWindow::addGameToGamesList(nx::GameInfos const& gameInfos)
 {
 	std::unordered_map<std::string, std::string> infos = gameInfos.getInfos();
+	std::string path = gameInfos.getPath();
 
-	if (this->_gameWidgetItemsList.find(infos["title"]) == this->_gameWidgetItemsList.end())
+	if (this->_gameWidgetItemsList.find(path) == this->_gameWidgetItemsList.end())
 	{
-		this->_gameWidgetItemsList.insert({infos["title"], GameWidgetItemStruct(gameInfos.getPath(),
+		this->_gameWidgetItemsList.insert({path, GameWidgetItemStruct(gameInfos.getPath(),
 																		  std::make_shared<NGameWidgetItem>(this, infos["icon"], infos["title"]),
 																		  std::make_shared<QListWidgetItem>(this->_ui->GamesList))});
-		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[infos["title"]].qtItem.get());
-		this->_gameWidgetItemsList[infos["title"]].qtItem->setSizeHint(this->_gameWidgetItemsList[infos["title"]].nxItem->sizeHint());
-		this->_ui->GamesList->setItemWidget(this->_gameWidgetItemsList[infos["title"]].qtItem.get(), this->_gameWidgetItemsList[infos["title"]].nxItem.get());
+
+		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[path].qtItem.get());
+		this->_gameWidgetItemsList[path].qtItem->setSizeHint(this->_gameWidgetItemsList[path].nxItem->sizeHint());
+		this->_ui->GamesList->setItemWidget(this->_gameWidgetItemsList[path].qtItem.get(), this->_gameWidgetItemsList[path].nxItem.get());
 	}
 	return (true);
 }
@@ -89,15 +91,18 @@ bool MainWindow::diffGamesListsData()
 	for (auto it = this->_gameWidgetItemsList.begin(); it != this->_gameWidgetItemsList.end(); ++it)
 	{
 		bool missing = (std::find_if(this->_gamesFound.begin(), this->_gamesFound.end(), [&](auto i) {return i.getPath() == it->second.gameInfos.getPath(); }) == this->_gamesFound.end());
-		if (missing)
-			it = this->_gameWidgetItemsList.erase(it);
+		if (missing) {
+			this->_gameWidgetItemsList.erase(it);
+			it = this->_gameWidgetItemsList.begin();
+		}
 	}
 
 	for (auto it = this->_gamesFound.begin(); it != this->_gamesFound.end(); ++it)
 	{
 		bool missing = (std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](auto i) {return i.second.gameInfos.getPath() == it->getPath(); }) == this->_gameWidgetItemsList.end());
-		if (missing)
+		if (missing) {
 			this->addGameToGamesList(*it);
+		}
 	}
 	return (true);
 }
