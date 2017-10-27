@@ -20,7 +20,8 @@ namespace nx {
 			std::string _msg; /**< A string containing the error message built in BadFormatGameJSONException(const std::string& error)*/
 		public:
 			/**
-			 * Default constructor for this class. It will construct a message based on the error given in parameter and will be prefixed by 
+			 * Default constructor for this class. <br>
+			 * It will construct a message based on the error given in parameter and will be prefixed by 
 			 * "Error while parsing the game configuration file: "
 			 * @param error contains the information about what happened
 			 */
