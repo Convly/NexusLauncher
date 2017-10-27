@@ -1,7 +1,10 @@
-### if your installation path are customized, please indicate them through the following vars
-### --> (BIN_MSVC_PATH) default =  "C:/Qt/5.9.1/msvc2015/bin"
+###
+### README
+###
+### if your installation fail or if your paths are customized, please indicate them through the following vars
+### --> (QT_BASE_PATH) default =	"C:/Qt/5.9.1/" on windows
+###									"$ENV{HOME}/Qt/5.9.1/" on linux
 ### --> (FSLIB_STATIC) default = "/usr/lib/gcc/x86_64-linux-gnu/5/libstdc++fs.a" use only in linux to compile with the filesystem experimental library in c++14
-#
 
 ### GENERAL SETTINGS
 cmake_minimum_required(VERSION 2.8.11)
@@ -17,7 +20,17 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-if (UNIX AND NOT APPLE)
+### QT BASE PATH
+if (NOT QT_BASE_PATH)
+	if (WIN32)
+		set(QT_BASE_PATH "C:/Qt/5.9.1/")
+	elseif (UNIX AND NOT APPLE)
+		set(QT_BASE_PATH $ENV{HOME}/Qt/5.9.1/)
+	endif()
+endif()
+
+### LIBCSTD++FS (UNIX)
+if (UNIX AND NOT APPLE AND NOT FSLIB_STATIC)
 	set(FSLIB_STATIC "/usr/lib/gcc/x86_64-linux-gnu/5/libstdc++fs.a")
 endif()
 
@@ -55,7 +68,10 @@ endif()
 ### APP TARGET
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${BIN_OUTPUT_DIR})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ${BIN_OUTPUT_DIR})
-set(BIN_MSVC_PATH "C:/Qt/5.9.1/msvc2015/bin")
+if (WIN32)
+	set(BIN_MSVC_PATH ${QT_BASE_PATH}/msvc2015/bin)
+endif()
+
 message("The executable will be generated at ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Running moc/uic/rcc automatically
@@ -75,9 +91,9 @@ if (WIN32)
 endif()
 
 if(WIN32)
-	set(CMAKE_PREFIX_PATH C:/Qt/5.9.1/msvc2015/lib/cmake)
+	set(CMAKE_PREFIX_PATH ${QT_BASE_PATH}/msvc2015/lib/cmake)
 elseif (UNIX AND NOT APPLE)
-	set(CMAKE_PREFIX_PATH $ENV{HOME}/Qt/5.9.1/gcc_64)
+	set(CMAKE_PREFIX_PATH ${QT_BASE_PATH}/gcc_64)
 endif()
 
 ### LIBRARIES
