@@ -61,26 +61,20 @@ MainWindow::~MainWindow()
 \********************/
 
 // Add a NGameWidgetItem in the GamesList
-bool MainWindow::addGameToGamesList(std::string const& picPath, std::string const& gameName)
+bool MainWindow::addGameToGamesList(nx::GameInfos const& gameInfos)
 {
-	if (this->_gameWidgetItemsList.find(gameName) == this->_gameWidgetItemsList.end())
+	std::unordered_map<std::string, std::string> infos = gameInfos.getInfos();
+
+	if (this->_gameWidgetItemsList.find(infos["title"]) == this->_gameWidgetItemsList.end())
 	{
-		this->_gameWidgetItemsList[gameName] = GameWidgetItemStruct(std::make_shared<NGameWidgetItem>(this, picPath, gameName),
-																	std::make_shared<QListWidgetItem>(this->_ui->GamesList));
+		this->_gameWidgetItemsList[infos["title"]] = GameWidgetItemStruct(gameInfos.getPath(),
+																		  std::make_shared<NGameWidgetItem>(this, infos["icon"], infos["title"]),
+																		  std::make_shared<QListWidgetItem>(this->_ui->GamesList));
 
-		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[gameName].qtItem.get());
-		this->_gameWidgetItemsList[gameName].qtItem->setSizeHint(this->_gameWidgetItemsList[gameName].nxItem->sizeHint());
-		this->_ui->GamesList->setItemWidget(this->_gameWidgetItemsList[gameName].qtItem.get(), this->_gameWidgetItemsList[gameName].nxItem.get());
+		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[infos["title"]].qtItem.get());
+		this->_gameWidgetItemsList[infos["title"]].qtItem->setSizeHint(this->_gameWidgetItemsList[infos["title"]].nxItem->sizeHint());
+		this->_ui->GamesList->setItemWidget(this->_gameWidgetItemsList[infos["title"]].qtItem.get(), this->_gameWidgetItemsList[infos["title"]].nxItem.get());
 	}
-
-	return (true);
-}
-
-// Remove a NGameWidgetItem by its name in the GamesList
-bool MainWindow::removeGameFromGamesList(std::string const& gameName)
-{
-	if (this->_gameWidgetItemsList.find(gameName) != this->_gameWidgetItemsList.end())
-		this->_gameWidgetItemsList.erase(gameName);
 	return (true);
 }
 
@@ -88,6 +82,24 @@ bool MainWindow::removeGameFromGamesList(std::string const& gameName)
 bool MainWindow::clearGamesList()
 {
 	this->_gameWidgetItemsList.clear();
+	return (true);
+}
+
+bool MainWindow::diffGamesListsData()
+{
+	for (auto it = this->_gameWidgetItemsList.begin(); it != this->_gameWidgetItemsList.end(); ++it)
+	{
+		bool missing = (std::find_if(this->_gamesFound.begin(), this->_gamesFound.end(), [&](auto i) {return i.getPath() == it->second.gameInfos.getPath(); }) == this->_gamesFound.end());
+		if (missing)
+			it = this->_gameWidgetItemsList.erase(it);
+	}
+
+	for (auto it = this->_gamesFound.begin(); it != this->_gamesFound.end(); ++it)
+	{
+		bool missing = (std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](auto i) {return i.second.gameInfos.getPath() == it->getPath(); }) == this->_gameWidgetItemsList.end());
+		if (missing)
+			this->addGameToGamesList(*it);
+	}
 	return (true);
 }
 
@@ -115,7 +127,8 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 // Triggered every second
 void MainWindow::UpdateGamesList()
 {
-	this->_uiSystem.getGameSystem()->update();
+	this->_gamesFound = this->_uiSystem.getGameSystem()->update();
+	this->diffGamesListsData();
 }
 
 // Triggered when the GAMES label is clicked
@@ -182,7 +195,6 @@ bool MainWindow::_init()
 	this->_initAnimators();
 	if (!this->_displayNexusLogo() || !this->_displayCloseIcon() || !this->_displayInteractiveLabels())
 		return (false);
-	this->_loadGamesList();
 	this->show();
 	return (true);
 }
@@ -256,19 +268,5 @@ bool MainWindow::_displayInteractiveLabels()
 	this->_listWidgets["StoreLabel"]->setGeometry(320, 35, 60, 26);
 	storeLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	storeLabel->setColor(QColor(255, 255, 255, 140));
-	return (true);
-}
-
-// Load items in the GamesList
-bool MainWindow::_loadGamesList()
-{
-	// When crawling the games directory, call this function for each game that was found :
-	this->addGameToGamesList("../ressources/images/icons/rtype.png", "R-Type");
-	this->addGameToGamesList("../ressources/images/icons/rtype.png", "R-Type 2");
-	this->addGameToGamesList("../ressources/images/icons/rtype.png", "R-Type 3");
-	this->addGameToGamesList("../ressources/images/icons/rtype.png", "R-Type 4");
-	this->addGameToGamesList("../ressources/images/icons/rtype.png", "R-Type 5");
-	this->addGameToGamesList("../ressources/images/icons/rtype.png", "R-Type 6");
-	this->addGameToGamesList("../ressources/images/icons/rtype.png", "R-Type 7");
 	return (true);
 }

@@ -27,7 +27,7 @@ namespace nx {
 		};
 
 	public:
-		GameInfos(const std::string&);
+		GameInfos(const std::string& = ".");
 		virtual ~GameInfos();
 
 	public:
