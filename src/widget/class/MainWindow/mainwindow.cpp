@@ -88,13 +88,13 @@ bool MainWindow::clearGamesList()
 
 bool MainWindow::diffGamesListsData()
 {
-	for (auto it = this->_gameWidgetItemsList.begin(); it != this->_gameWidgetItemsList.end(); ++it)
+	for (auto it = this->_gameWidgetItemsList.begin(); it != this->_gameWidgetItemsList.end();)
 	{
 		bool missing = (std::find_if(this->_gamesFound.begin(), this->_gamesFound.end(), [&](auto i) {return i == it->second.gameInfos; }) == this->_gamesFound.end());
-		if (missing) {
-			this->_gameWidgetItemsList.erase(it);
-			it = this->_gameWidgetItemsList.begin();
-		}
+		if (missing)
+			it = this->_gameWidgetItemsList.erase(it);
+		else
+			++it;
 	}
 
 	for (auto it = this->_gamesFound.begin(); it != this->_gamesFound.end(); ++it)
