@@ -29,8 +29,8 @@ class MainWindow : public QMainWindow
 	{
 		GameWidgetItemStruct() : nxItem(nullptr), qtItem(nullptr) {}
 		GameWidgetItemStruct(std::string const& cfgPath) : gameInfos(cfgPath), nxItem(nullptr), qtItem(nullptr) {}
-		GameWidgetItemStruct(nx::GameInfos const& gInfo, std::shared_ptr<NGameWidgetItem> nItem, std::shared_ptr<QListWidgetItem> qItem) :
-			gameInfos(gInfo), nxItem(nItem), qtItem(qItem) {}
+		GameWidgetItemStruct(std::string const& cfgPath, std::shared_ptr<NGameWidgetItem> nItem, std::shared_ptr<QListWidgetItem> qItem)
+		: gameInfos(cfgPath), nxItem(nItem), qtItem(qItem) {}
 		~GameWidgetItemStruct() {}
 
 		nx::GameInfos						gameInfos;

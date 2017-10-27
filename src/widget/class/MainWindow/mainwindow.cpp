@@ -67,10 +67,9 @@ bool MainWindow::addGameToGamesList(nx::GameInfos const& gameInfos)
 
 	if (this->_gameWidgetItemsList.find(infos["title"]) == this->_gameWidgetItemsList.end())
 	{
-		this->_gameWidgetItemsList[infos["title"]] = GameWidgetItemStruct(gameInfos.getPath(),
+		this->_gameWidgetItemsList.insert({infos["title"], GameWidgetItemStruct(gameInfos.getPath(),
 																		  std::make_shared<NGameWidgetItem>(this, infos["icon"], infos["title"]),
-																		  std::make_shared<QListWidgetItem>(this->_ui->GamesList));
-
+																		  std::make_shared<QListWidgetItem>(this->_ui->GamesList))});
 		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[infos["title"]].qtItem.get());
 		this->_gameWidgetItemsList[infos["title"]].qtItem->setSizeHint(this->_gameWidgetItemsList[infos["title"]].nxItem->sizeHint());
 		this->_ui->GamesList->setItemWidget(this->_gameWidgetItemsList[infos["title"]].qtItem.get(), this->_gameWidgetItemsList[infos["title"]].nxItem.get());
