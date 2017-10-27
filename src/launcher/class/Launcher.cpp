@@ -1,3 +1,8 @@
+/**
+ * @file Launcher.cpp
+ * @author JSX
+ */
+
 #include "Launcher.hpp"
 
 nx::Launcher::Launcher(int ac, char** av)
