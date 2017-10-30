@@ -16,6 +16,8 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 		// Throw an error;
 	}
 
+	this->_ui->GamePlayButton->setStyleSheet(QString::fromStdString("QPushButton {background-color: " + nx::REDFLAT + "; color: white}"));
+
 	// Window background color
 	this->setStyleSheet("background-color: rgb(5, 30, 56);");
 	this->_ui->GamesList->setStyleSheet(QString::fromUtf8(
@@ -49,6 +51,8 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
 	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), qApp, SLOT(quit()));
+
+	QObject::connect(this->_ui->GamesList, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(ItemHasChanged(QListWidgetItem *, QListWidgetItem *)));
 }
 
 MainWindow::~MainWindow()
@@ -124,9 +128,9 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 	}
 }
 
-/*************\
-|*  SIGNALS  *|
-\*************/
+/***********\
+|*  SLOTS  *|
+\***********/
 
 // Triggered every second
 void MainWindow::UpdateGamesList()
@@ -146,7 +150,7 @@ void MainWindow::GamesLabelEntered()
 {
 	this->_gamesLabelAnim->setDuration(250);
 	this->_gamesLabelAnim->setStartValue(QColor(255, 255, 255, 140));
-	this->_gamesLabelAnim->setEndValue(QColor(255, 255, 255, 255));
+	this->_gamesLabelAnim->setEndValue(QColor(QString::fromStdString(nx::REDFLAT)));
 	this->_gamesLabelAnim->start();
 	this->_listWidgets["GamesLabel"]->setCursor(Qt::PointingHandCursor);
 }
@@ -172,7 +176,7 @@ void MainWindow::StoreLabelEntered()
 {
 	this->_storeLabelAnim->setDuration(250);
 	this->_storeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
-	this->_storeLabelAnim->setEndValue(QColor(255, 255, 255, 255));
+	this->_storeLabelAnim->setEndValue(QColor(QString::fromStdString(nx::REDFLAT)));
 	this->_storeLabelAnim->start();
 	this->_listWidgets["StoreLabel"]->setCursor(Qt::PointingHandCursor);
 }
@@ -185,6 +189,25 @@ void MainWindow::StoreLabelLeft()
 	this->_storeLabelAnim->setEndValue(QColor(255, 255, 255, 140));
 	this->_storeLabelAnim->start();
 	this->_listWidgets["StoreLabel"]->setCursor(Qt::ArrowCursor);
+}
+
+
+void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+	for (auto it : this->_gameWidgetItemsList)
+	{
+		if (it.second.qtItem.get() == current)
+		{
+			std::unordered_map<std::string, std::string> infos = it.second.gameInfos.getInfos();
+
+			this->_ui->GameTitleLabel->setText(QString::fromStdString(infos["title"]));
+			this->_ui->GameAuthorLabel->setText(QString::fromStdString("By " + infos["author"]));
+			this->_ui->GameUrlLabel->setText((infos["url"] != "none") ? (this->_createUrlLabelData(infos["url"])) : (QString::fromStdString("")));
+			this->_ui->GameHeaderDescriptionLabel->setText(QString::fromStdString("Description:"));
+			this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos["description"]));
+			this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos["version"]));
+		}
+	}
 }
 
 /*********************\
@@ -235,7 +258,7 @@ bool MainWindow::_displayNexusLogo()
 
 	logo->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	logo->setPixmap(img.scaled(160, 90, Qt::KeepAspectRatio));
-	logo->setGeometry(8, 0, 160, 90);
+	logo->setGeometry(15, 0, 160, 90);
 	return (true);
 }
 
@@ -273,4 +296,12 @@ bool MainWindow::_displayInteractiveLabels()
 	storeLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	storeLabel->setColor(QColor(255, 255, 255, 140));
 	return (true);
+}
+
+
+QString	MainWindow::_createUrlLabelData(std::string const& url)
+{
+	return (QString::fromStdString("<html><head/><body><p>More informations on <a href=\"" + url +
+								   "\"><span style=\" text-decoration: underline; color:#007af4;\">" + url +
+								   "</span></a></p></body></html>"));
 }

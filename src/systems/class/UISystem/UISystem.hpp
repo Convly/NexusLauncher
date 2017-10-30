@@ -11,6 +11,8 @@ namespace nx {
 }
 
 namespace nx {
+	static std::string REDFLAT = "#E74C3C";
+
 	class UISystem : public nx::SystemTpl
 	{
 	public:

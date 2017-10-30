@@ -8,6 +8,7 @@
 #include <QPropertyAnimation>
 #include <QMouseEvent>
 #include <QTimer>
+#include <QListWidget>
 #include "GameInfos.hpp"
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
@@ -50,13 +51,15 @@ public:
 	void mouseMoveEvent(QMouseEvent * evt);
 
 private:
-	bool _initListWidgets();
-	bool _initAnimators();
-	bool _displayNexusLogo();
-	bool _displayCloseIcon();
-	bool _displayInteractiveLabels();
+	bool	_initListWidgets();
+	bool	_initAnimators();
+	bool	_displayNexusLogo();
+	bool	_displayCloseIcon();
+	bool	_displayInteractiveLabels();
 
-	bool _init();
+	bool	_init();
+
+	QString	_createUrlLabelData(std::string const& url);
 
 public slots:
 	void UpdateGamesList();
@@ -66,6 +69,7 @@ public slots:
 	void StoreLabelClicked();
 	void StoreLabelEntered();
 	void StoreLabelLeft();
+	void ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous);
 
 private:
 	std::shared_ptr<Ui::MainWindow>										_ui;
