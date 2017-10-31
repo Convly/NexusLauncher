@@ -12,7 +12,7 @@ cmake_minimum_required(VERSION 2.8.11)
 # Create project
 set(APP_NAME "NexusLauncher")
 project(${APP_NAME})
- 
+
 ### USEFUL VARIABLES
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -47,7 +47,7 @@ include_directories(
     ${APP_DIR}/src/widget/class/InteractiveLabel
 	${APP_DIR}/src/widget/class/NGameWidgetItem
   	# --- SYSTEMS
-	${APP_DIR}/src/systems/templates	
+	${APP_DIR}/src/systems/templates
 	${APP_DIR}/src/systems/class/UISystem/
 	${APP_DIR}/src/systems/class/GamesSystem/
   	# --- LAUNCHER
@@ -120,6 +120,7 @@ qt5_wrap_ui(UIS_HDRS
 
 ### EXECUTABLE
 add_executable(${APP_NAME}
+  WIN32
   ${SOURCE_LAUNCHER_FILES}
   ${HEADER_LAUNCHER_FILES_H}
   ${HEADER_LAUNCHER_FILES_HPP}

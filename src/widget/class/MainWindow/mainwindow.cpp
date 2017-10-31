@@ -16,6 +16,14 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 		// Throw an error;
 	}
 
+	QSizeGrip *grip = new QSizeGrip(this);
+	//grip->setFixedSize(10, 10);
+
+	this->statusBar()->hide();
+	this->_ui->GameDataLayout->addWidget(grip, 0, Qt::AlignBottom | Qt::AlignRight);
+	this->_ui->GamePlayButton->setStyleSheet(QString::fromStdString("QPushButton {background-color: " + nx::REDFLAT + "; color: white}"));
+	this->_ui->GamePlayButton->setHidden(true);
+
 	// Window background color
 	this->setStyleSheet("background-color: rgb(5, 30, 56);");
 	this->_ui->GamesList->setStyleSheet(QString::fromUtf8(
@@ -49,6 +57,8 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
 	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), qApp, SLOT(quit()));
+
+	QObject::connect(this->_ui->GamesList, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(ItemHasChanged(QListWidgetItem *, QListWidgetItem *)));
 }
 
 MainWindow::~MainWindow()
@@ -75,6 +85,11 @@ bool MainWindow::addGameToGamesList(nx::GameInfos const& gameInfos)
 		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[path].qtItem.get());
 		this->_gameWidgetItemsList[path].qtItem->setSizeHint(this->_gameWidgetItemsList[path].nxItem->sizeHint());
 		this->_ui->GamesList->setItemWidget(this->_gameWidgetItemsList[path].qtItem.get(), this->_gameWidgetItemsList[path].nxItem.get());
+		if (!this->_ui->GamesList->selectedItems().count())
+		{
+			this->_ui->GamesList->item(0)->setSelected(true);
+			this->ItemHasChanged(this->_ui->GamesList->item(0), Q_NULLPTR);
+		}
 	}
 	return (true);
 }
@@ -124,9 +139,9 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 	}
 }
 
-/*************\
-|*  SIGNALS  *|
-\*************/
+/***********\
+|*  SLOTS  *|
+\***********/
 
 // Triggered every second
 void MainWindow::UpdateGamesList()
@@ -146,7 +161,7 @@ void MainWindow::GamesLabelEntered()
 {
 	this->_gamesLabelAnim->setDuration(250);
 	this->_gamesLabelAnim->setStartValue(QColor(255, 255, 255, 140));
-	this->_gamesLabelAnim->setEndValue(QColor(255, 255, 255, 255));
+	this->_gamesLabelAnim->setEndValue(QColor(QString::fromStdString(nx::REDFLAT)));
 	this->_gamesLabelAnim->start();
 	this->_listWidgets["GamesLabel"]->setCursor(Qt::PointingHandCursor);
 }
@@ -172,7 +187,7 @@ void MainWindow::StoreLabelEntered()
 {
 	this->_storeLabelAnim->setDuration(250);
 	this->_storeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
-	this->_storeLabelAnim->setEndValue(QColor(255, 255, 255, 255));
+	this->_storeLabelAnim->setEndValue(QColor(QString::fromStdString(nx::REDFLAT)));
 	this->_storeLabelAnim->start();
 	this->_listWidgets["StoreLabel"]->setCursor(Qt::PointingHandCursor);
 }
@@ -185,6 +200,38 @@ void MainWindow::StoreLabelLeft()
 	this->_storeLabelAnim->setEndValue(QColor(255, 255, 255, 140));
 	this->_storeLabelAnim->start();
 	this->_listWidgets["StoreLabel"]->setCursor(Qt::ArrowCursor);
+}
+
+
+void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous)
+{
+	for (auto it : this->_gameWidgetItemsList)
+	{
+		if (it.second.qtItem.get() == current)
+		{
+			std::unordered_map<std::string, std::string> infos = it.second.gameInfos.getInfos();
+
+			this->_ui->GameTitleLabel->setText(QString::fromStdString(infos["title"]));
+			this->_ui->GameAuthorLabel->setText(this->_createAuthorLabelData(infos["author"]));
+			QFont font(this->_ui->GameTitleLabel->font());
+			font.setCapitalization(QFont::AllUppercase);
+			font.setLetterSpacing(QFont::AbsoluteSpacing, 2);
+			this->_ui->GameTitleLabel->setFont(font);
+			this->_ui->GameUrlLabel->setText((infos["url"] != "none") ? (this->_createUrlLabelData(infos["url"])) : (QString::fromStdString("")));
+			this->_ui->GameHeaderDescriptionLabel->setText(QString::fromStdString("Description:"));
+			this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos["description"]));
+			this->_ui->GamePlayButton->setHidden(false);
+			this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos["version"]));
+			if (infos["cover"] == "default" /*|| cover not found*/)
+				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
+			else
+				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
+					"#GameDataWidget {border-image: url(" + infos["cover"] + ") 0 0 0 0 stretch stretch;}"
+					"#GameDataOverlay {background-color: rgba(0, 0, 0, 0.5);}"
+					"#GameDataOverlay * {background-color: rgba(0, 0, 0, 0);}"
+			));
+		}
+	}
 }
 
 /*********************\
@@ -235,7 +282,7 @@ bool MainWindow::_displayNexusLogo()
 
 	logo->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	logo->setPixmap(img.scaled(160, 90, Qt::KeepAspectRatio));
-	logo->setGeometry(8, 0, 160, 90);
+	logo->setGeometry(15, 0, 160, 90);
 	return (true);
 }
 
@@ -249,8 +296,9 @@ bool MainWindow::_displayCloseIcon()
 
 	QPixmap img("../ressources/images/icons/closeicon.png");
 
+	logo->setContentsMargins(0, 10, 10, 0);
 	logo->setPixmap(img);
-	logo->setFixedSize(16, 90);
+	logo->setFixedSize(26, 100);
 	logo->setAlignment(Qt::AlignRight | Qt::AlignTop);
 
 	this->_ui->CloseLogoLayout->addWidget(logo);
@@ -273,4 +321,18 @@ bool MainWindow::_displayInteractiveLabels()
 	storeLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	storeLabel->setColor(QColor(255, 255, 255, 140));
 	return (true);
+}
+
+
+QString	MainWindow::_createUrlLabelData(std::string const& url)
+{
+	return (QString::fromStdString("<html><head/><body><p>More informations on <a href=\"" + url +
+								   "\"><span style=\" text-decoration: underline; color:#007af4;\">" + url +
+								   "</span></a></p></body></html>"));
+}
+
+QString MainWindow::_createAuthorLabelData(std::string const& author)
+{
+	return (QString::fromStdString("<html><head/><body><p>By <span style=\"font-weight:600;color:#e74c3c;\">" +
+									author + "</span></p></body></html>"));
 }
