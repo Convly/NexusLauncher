@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QTimer>
 #include <QListWidget>
+#include <QSizeGrip>
 #include "GameInfos.hpp"
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
@@ -60,6 +61,7 @@ private:
 	bool	_init();
 
 	QString	_createUrlLabelData(std::string const& url);
+	QString	_createAuthorLabelData(std::string const& author);
 
 public slots:
 	void UpdateGamesList();
