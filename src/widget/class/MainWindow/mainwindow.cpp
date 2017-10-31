@@ -7,7 +7,8 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QMainWindow(parent, Qt::FramelessWindowHint),
 	_ui(std::make_shared<Ui::MainWindow>()),
 	_uiSystem(uiSystem),
-	_timer(std::make_shared<QTimer>(this))
+	_timer(std::make_shared<QTimer>(this)),
+	_isClosing(false)
 {
 	this->_ui->setupUi(this);
 
@@ -205,6 +206,8 @@ void MainWindow::StoreLabelLeft()
 
 void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
+	if (this->_isClosing)
+		return;
 	for (auto it : this->_gameWidgetItemsList)
 	{
 		if (it.second.qtItem.get() == current)
@@ -236,10 +239,7 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 
 void MainWindow::QuitApplication()
 {
-	auto l = this->_ui->GamesList->selectedItems();
-
-	if (!l.isEmpty())
-		l[0]->setSelected(false);
+	this->_isClosing = true;
 	QApplication::quit();
 }
 
