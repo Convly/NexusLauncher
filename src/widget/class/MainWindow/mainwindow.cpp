@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(clicked()), this, SLOT(StoreLabelClicked()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
-	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), qApp, SLOT(quit()));
+	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), this, SLOT(QuitApplication()));
 
 	QObject::connect(this->_ui->GamesList, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(ItemHasChanged(QListWidgetItem *, QListWidgetItem *)));
 }
@@ -232,6 +232,15 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 			));
 		}
 	}
+}
+
+void MainWindow::QuitApplication()
+{
+	auto l = this->_ui->GamesList->selectedItems();
+
+	if (!l.isEmpty())
+		l[0]->setSelected(false);
+	QApplication::quit();
 }
 
 /*********************\

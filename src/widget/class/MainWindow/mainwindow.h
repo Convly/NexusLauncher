@@ -72,6 +72,7 @@ public slots:
 	void StoreLabelEntered();
 	void StoreLabelLeft();
 	void ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous);
+	void QuitApplication();
 
 private:
 	std::shared_ptr<Ui::MainWindow>										_ui;
