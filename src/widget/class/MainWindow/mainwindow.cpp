@@ -59,6 +59,8 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
 	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), this, SLOT(QuitApplication()));
 
+	QObject::connect(this->_ui->GamePlayButton, SIGNAL(clicked()), this, SLOT(GamePlayButtonClicked()));
+
 	QObject::connect(this->_ui->GamesList, SIGNAL(currentItemChanged(QListWidgetItem *, QListWidgetItem *)), this, SLOT(ItemHasChanged(QListWidgetItem *, QListWidgetItem *)));
 }
 
@@ -140,6 +142,16 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 	}
 }
 
+const MainWindow::GameWidgetItemStruct& MainWindow::getSelectedWidget()
+{
+	auto selectedItem = this->_ui->GamesList->selectedItems().at(0);
+	for (const auto& it : this->_gameWidgetItemsList) {
+		if (it.second.qtItem.get() == selectedItem) {
+			return it.second;
+		}
+	}
+}
+
 /***********\
 |*  SLOTS  *|
 \***********/
@@ -203,6 +215,17 @@ void MainWindow::StoreLabelLeft()
 	this->_listWidgets["StoreLabel"]->setCursor(Qt::ArrowCursor);
 }
 
+// Triggered when the play button is clicked
+void MainWindow::GamePlayButtonClicked()
+{
+	auto& item = this->getSelectedWidget();
+
+	QString cmd(QString::fromStdString(fs::path(item.gameInfos.getPath()).parent_path().string() + "/" + item.gameInfos.getInfos().at("command") + BINARY_EXTENSION));
+
+	std::shared_ptr<QProcess> pc = std::make_shared<QProcess>(this);
+    pc->startDetached(cmd);
+}
+
 
 void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
@@ -246,7 +269,6 @@ void MainWindow::QuitApplication()
 /*********************\
 |*  PRIVATE METHODS  *|
 \*********************/
-
 
 // Initialize everything in the MainWindow
 bool MainWindow::_init()
