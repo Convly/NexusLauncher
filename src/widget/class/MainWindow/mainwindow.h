@@ -18,6 +18,8 @@
 #include "InteractiveLabel.hpp"
 #include "ngamewidgetitem.h"
 
+#include "NoSelectedWidgetException.hpp"
+
 namespace fs = std::experimental::filesystem;
 
 #if defined(__GNUC__) || defined(__GNUG__)
@@ -62,7 +64,8 @@ public:
 	void mousePressEvent(QMouseEvent * evt);
 	void mouseMoveEvent(QMouseEvent * evt);
 	const MainWindow::GameWidgetItemStruct& getSelectedWidget(void);
-
+	void updateGameData(const std::unordered_map<std::string, std::string>& infos);	
+	
 private:
 	bool	_initListWidgets();
 	bool	_initAnimators();
