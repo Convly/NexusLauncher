@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "UISystem.hpp"
 #include "GamesSystem.hpp"
 #include "ui_mainwindow.h"
@@ -57,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
 	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), this, SLOT(QuitApplication()));
+	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(entered()), this, SLOT(CloseLabelEntered()));
+	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(left()), this, SLOT(CloseLabelLeft()));
+
 
 	QObject::connect(this->_ui->GamePlayButton, SIGNAL(clicked()), this, SLOT(GamePlayButtonClicked()));
 
@@ -240,6 +243,26 @@ void MainWindow::StoreLabelLeft()
 	this->_listWidgets["StoreLabel"]->setCursor(Qt::ArrowCursor);
 }
 
+// Triggered when the mouse is entering the CloseLogo label
+void MainWindow::CloseLabelEntered()
+{
+	this->_closeLabelAnim->setDuration(250);
+	this->_closeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
+	this->_closeLabelAnim->setEndValue(QColor(QString::fromStdString(nx::REDFLAT)));
+	this->_closeLabelAnim->start();
+	this->_listWidgets["LogoClose"]->setCursor(Qt::PointingHandCursor);
+}
+
+// Triggered when the mouse is leaving the CloseLogo label
+void MainWindow::CloseLabelLeft()
+{
+	this->_closeLabelAnim->setDuration(0);
+	this->_closeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
+	this->_closeLabelAnim->setEndValue(QColor(255, 255, 255, 140));
+	this->_closeLabelAnim->start();
+	this->_listWidgets["LogoClose"]->setCursor(Qt::ArrowCursor);
+}
+
 // Triggered when the play button is clicked
 void MainWindow::GamePlayButtonClicked()
 {
@@ -323,7 +346,7 @@ bool MainWindow::_initListWidgets()
 		{ "LogoLabel", std::make_shared<QLabel>(this->_ui->NavBarFrame) },
 		{ "GamesLabel", std::make_shared<InteractiveLabel>(this->_ui->NavBarFrame, "GAMES", 12) },
 		{ "StoreLabel", std::make_shared<InteractiveLabel>(this->_ui->NavBarFrame, "STORE", 12) },
-		{ "LogoClose", std::make_shared<InteractiveLabel>(this) }
+		{ "LogoClose", std::make_shared<InteractiveLabel>(this, u8"\uf00d") }
 	};
 	return (true);
 }
@@ -333,6 +356,7 @@ bool MainWindow::_initAnimators()
 {
 	this->_gamesLabelAnim = std::make_shared<QPropertyAnimation>(this->_listWidgets["GamesLabel"].get(), "color");
 	this->_storeLabelAnim = std::make_shared<QPropertyAnimation>(this->_listWidgets["StoreLabel"].get(), "color");
+	this->_closeLabelAnim = std::make_shared<QPropertyAnimation>(this->_listWidgets["LogoClose"].get(), "color");
 	return (true);
 }
 
@@ -360,14 +384,23 @@ bool MainWindow::_displayCloseIcon()
 	if (!logo)
 		return (false);
 
-	QPixmap img(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/images/icons/closeicon.png"));
-
 	logo->setContentsMargins(0, 10, 10, 0);
-	logo->setPixmap(img);
-	logo->setFixedSize(26, 100);
+	logo->setFixedSize(32, 32);
 	logo->setAlignment(Qt::AlignRight | Qt::AlignTop);
 
+	if (QFontDatabase::addApplicationFont(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/fonts/fontawesome-webfont.ttf")) < 0)
+		std::cout << "couldn't load FA" << std::endl;
+
+	QFont font;
+
+	font.setFamily("FontAwesome");
+	font.setPixelSize(24);
+
+	logo->setFont(font);
+	logo->setColor(QColor(255, 255, 255, 140));
+	
 	this->_ui->CloseLogoLayout->addWidget(logo);
+	this->_ui->CloseLogoLayout->setAlignment(logo, Qt::AlignRight | Qt::AlignTop);
 	return (true);
 }
 

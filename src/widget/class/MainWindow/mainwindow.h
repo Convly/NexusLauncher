@@ -13,6 +13,7 @@
 #include <QSizeGrip>
 #include <QProcess>
 #include <QImageReader>
+#include <QFontDatabase>
 #include "GameInfos.hpp"
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
@@ -86,6 +87,8 @@ public slots:
 	void StoreLabelClicked();
 	void StoreLabelEntered();
 	void StoreLabelLeft();
+	void CloseLabelEntered();
+	void CloseLabelLeft();
 	void ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous);
 	void QuitApplication();
 	void GamePlayButtonClicked();
@@ -96,6 +99,7 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<QWidget>>			_listWidgets;
 	std::shared_ptr<QPropertyAnimation>									_gamesLabelAnim;
 	std::shared_ptr<QPropertyAnimation>									_storeLabelAnim;
+	std::shared_ptr<QPropertyAnimation>									_closeLabelAnim;
 	std::unordered_map<std::string, GameWidgetItemStruct>				_gameWidgetItemsList;
 	std::vector<nx::GameInfos>											_gamesFound;
 
