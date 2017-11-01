@@ -220,7 +220,6 @@ void MainWindow::GamePlayButtonClicked()
 	auto& item = this->getSelectedWidget();
 
 	QString cmd(QString::fromStdString(fs::path(item.gameInfos.getPath()).parent_path().string() + "/" + item.gameInfos.getInfos().at("command") + BINARY_EXTENSION));
-	std::cout << cmd.toStdString() << std::endl;
 
 	std::shared_ptr<QProcess> pc = std::make_shared<QProcess>(this);
     pc->startDetached(cmd);
