@@ -106,6 +106,12 @@ bool MainWindow::clearGamesList()
 
 bool MainWindow::diffGamesListsData()
 {
+	std::string s_path = "";
+
+	try {
+		s_path = this->getSelectedWidget().gameInfos.getPath();
+	} catch (const nx::NoSelectedWidgetException) {}
+	
 	for (auto it = this->_gameWidgetItemsList.begin(); it != this->_gameWidgetItemsList.end();)
 	{
 		bool missing = (std::find_if(this->_gamesFound.begin(), this->_gamesFound.end(), [&](auto i) {return i == it->second.gameInfos; }) == this->_gamesFound.end());
@@ -120,6 +126,21 @@ bool MainWindow::diffGamesListsData()
 		bool missing = (std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](auto i) {return i.second.gameInfos == *it; }) == this->_gameWidgetItemsList.end());
 		if (missing) {
 			this->addGameToGamesList(*it);
+		}
+	}
+	
+	if (!s_path.empty()) {
+		auto condIt = std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](const auto it){
+			return it.second.gameInfos.getPath() == s_path;
+		});
+		
+		if (condIt != this->_gameWidgetItemsList.end()) {
+			std::for_each(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](const auto sit){
+				sit.second.qtItem->setSelected(false);
+			});
+
+			condIt->second.qtItem->setSelected(true);
+			this->updateGameData(condIt->second.gameInfos.getInfos());
 		}
 	}
 	return (true);
@@ -144,6 +165,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 
 const MainWindow::GameWidgetItemStruct& MainWindow::getSelectedWidget()
 {
+	if (this->_ui->GamesList->selectedItems().size() == 0) {
+		throw nx::NoSelectedWidgetException();
+	}
+
 	auto selectedItem = this->_ui->GamesList->selectedItems().at(0);
 	for (const auto& it : this->_gameWidgetItemsList) {
 		if (it.second.qtItem.get() == selectedItem) {
@@ -226,6 +251,29 @@ void MainWindow::GamePlayButtonClicked()
     pc->startDetached(cmd);
 }
 
+void MainWindow::updateGameData(const std::unordered_map<std::string, std::string>& infos)
+{
+	this->_ui->GameTitleLabel->setText(QString::fromStdString(infos.at("title")));
+	this->_ui->GameAuthorLabel->setText(this->_createAuthorLabelData(infos.at("author")));
+	QFont font(this->_ui->GameTitleLabel->font());
+	font.setCapitalization(QFont::AllUppercase);
+	font.setLetterSpacing(QFont::AbsoluteSpacing, 2);
+	this->_ui->GameTitleLabel->setFont(font);
+	this->_ui->GameUrlLabel->setText((infos.at("url") != "none") ? (this->_createUrlLabelData(infos.at("url"))) : (QString::fromStdString("")));
+	this->_ui->GameHeaderDescriptionLabel->setText(QString::fromStdString("Description:"));
+	this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos.at("description")));
+	this->_ui->GamePlayButton->setHidden(false);
+	this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos.at("version")));
+	if (infos.at("cover") == "default" /*|| cover not found*/)
+		this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
+	else
+		this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
+			"#GameDataWidget {border-image: url(" + infos.at("cover") + ") 0 0 0 0 stretch stretch;}"
+			"#GameDataOverlay {background-color: rgba(0, 0, 0, 0.5);}"
+			"#GameDataOverlay * {background-color: rgba(0, 0, 0, 0);}"
+	));
+}
+
 
 void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
@@ -236,26 +284,7 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 		if (it.second.qtItem.get() == current)
 		{
 			std::unordered_map<std::string, std::string> infos = it.second.gameInfos.getInfos();
-
-			this->_ui->GameTitleLabel->setText(QString::fromStdString(infos["title"]));
-			this->_ui->GameAuthorLabel->setText(this->_createAuthorLabelData(infos["author"]));
-			QFont font(this->_ui->GameTitleLabel->font());
-			font.setCapitalization(QFont::AllUppercase);
-			font.setLetterSpacing(QFont::AbsoluteSpacing, 2);
-			this->_ui->GameTitleLabel->setFont(font);
-			this->_ui->GameUrlLabel->setText((infos["url"] != "none") ? (this->_createUrlLabelData(infos["url"])) : (QString::fromStdString("")));
-			this->_ui->GameHeaderDescriptionLabel->setText(QString::fromStdString("Description:"));
-			this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos["description"]));
-			this->_ui->GamePlayButton->setHidden(false);
-			this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos["version"]));
-			if (infos["cover"] == "default" /*|| cover not found*/)
-				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
-			else
-				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
-					"#GameDataWidget {border-image: url(" + infos["cover"] + ") 0 0 0 0 stretch stretch;}"
-					"#GameDataOverlay {background-color: rgba(0, 0, 0, 0.5);}"
-					"#GameDataOverlay * {background-color: rgba(0, 0, 0, 0);}"
-			));
+			this->updateGameData(infos);
 		}
 	}
 }
