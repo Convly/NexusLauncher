@@ -12,6 +12,7 @@
 #include <QListWidget>
 #include <QSizeGrip>
 #include <QProcess>
+#include <QImageReader>
 #include "GameInfos.hpp"
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
