@@ -19,7 +19,7 @@ void nx::GamesSystem::init()
 {
 	auto ret = this->is_launcherArchValid();
 	if (!ret.first) {
-		throw nx::SystemInitException(this->getName(), std::string("Cannot find 'games' directory in ") + this->_binaryPath);
+		fs::create_directory(NX_GAMES_DIR);
 	}
 
 	this->_gamesPath = ret.second.string();
