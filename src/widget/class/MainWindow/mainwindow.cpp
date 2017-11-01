@@ -81,7 +81,8 @@ bool MainWindow::addGameToGamesList(nx::GameInfos const& gameInfos)
 	if (this->_gameWidgetItemsList.find(path) == this->_gameWidgetItemsList.end())
 	{
 		this->_gameWidgetItemsList.insert({path, GameWidgetItemStruct(gameInfos.getPath(),
-																		  std::make_shared<NGameWidgetItem>(this, infos["icon"], infos["title"]),
+																		  std::make_shared<NGameWidgetItem>(this, this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/" + infos["icon"],
+																											infos["title"]),
 																		  std::make_shared<QListWidgetItem>(this->_ui->GamesList))});
 
 		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[path].qtItem.get());
@@ -247,14 +248,20 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 			this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos["description"]));
 			this->_ui->GamePlayButton->setHidden(false);
 			this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos["version"]));
-			if (infos["cover"] == "default" || QImageReader::imageFormat(QString::fromStdString(infos["cover"])).isEmpty())
+			if (infos["cover"] == "default" || QImageReader::imageFormat(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/" +
+																								infos["cover"])).isEmpty())
 				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
 			else
+			{
+				std::string absPath(this->_uiSystem.getRoot().getBinaryAbsolutePath());
+				std::replace(absPath.begin(), absPath.end(), '\\', '/');
+
 				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
-					"#GameDataWidget {border-image: url(" + infos["cover"] + ") 0 0 0 0 stretch stretch;}"
+					"#GameDataWidget {border-image: url(" + absPath + "/" + infos["cover"] + ") 0 0 0 0 stretch stretch;}"
 					"#GameDataOverlay {background-color: rgba(0, 0, 0, 0.5);}"
 					"#GameDataOverlay * {background-color: rgba(0, 0, 0, 0);}"
-			));
+				));
+			}
 		}
 	}
 }
@@ -308,7 +315,7 @@ bool MainWindow::_displayNexusLogo()
 	if (!logo)
 		return (false);
 
-	QPixmap img("../ressources/images/icons/nexuslogo.png");
+	QPixmap img(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/images/icons/nexuslogo.png"));
 
 	logo->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	logo->setPixmap(img.scaled(160, 90, Qt::KeepAspectRatio));
@@ -324,7 +331,7 @@ bool MainWindow::_displayCloseIcon()
 	if (!logo)
 		return (false);
 
-	QPixmap img("../ressources/images/icons/closeicon.png");
+	QPixmap img(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/images/icons/closeicon.png"));
 
 	logo->setContentsMargins(0, 10, 10, 0);
 	logo->setPixmap(img);

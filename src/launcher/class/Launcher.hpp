@@ -70,6 +70,14 @@ namespace nx {
 		 */
 		char** getArgv(void) const;
 
+
+		/**
+		* Getter for the binary absolute path
+		* @return This method returns a const std::string containing the binary absolute path
+		*/
+		std::string const	getBinaryAbsolutePath() const;
+
+
 	private:
 		/**
 		 * This method will call the init method on each of the system from nx::Launcher::_systems.
