@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+﻿#include "mainwindow.h"
 #include "UISystem.hpp"
 #include "GamesSystem.hpp"
 #include "ui_mainwindow.h"
@@ -57,6 +57,9 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
 	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), this, SLOT(QuitApplication()));
+	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(entered()), this, SLOT(CloseLabelEntered()));
+	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(left()), this, SLOT(CloseLabelLeft()));
+
 
 	QObject::connect(this->_ui->GamePlayButton, SIGNAL(clicked()), this, SLOT(GamePlayButtonClicked()));
 
@@ -106,6 +109,12 @@ bool MainWindow::clearGamesList()
 
 bool MainWindow::diffGamesListsData()
 {
+	std::string s_path = "";
+
+	try {
+		s_path = this->getSelectedWidget().gameInfos.getPath();
+	} catch (const nx::NoSelectedWidgetException) {}
+	
 	for (auto it = this->_gameWidgetItemsList.begin(); it != this->_gameWidgetItemsList.end();)
 	{
 		bool missing = (std::find_if(this->_gamesFound.begin(), this->_gamesFound.end(), [&](auto i) {return i == it->second.gameInfos; }) == this->_gamesFound.end());
@@ -120,6 +129,21 @@ bool MainWindow::diffGamesListsData()
 		bool missing = (std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](auto i) {return i.second.gameInfos == *it; }) == this->_gameWidgetItemsList.end());
 		if (missing) {
 			this->addGameToGamesList(*it);
+		}
+	}
+	
+	if (!s_path.empty()) {
+		auto condIt = std::find_if(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](const auto it){
+			return it.second.gameInfos.getPath() == s_path;
+		});
+		
+		if (condIt != this->_gameWidgetItemsList.end()) {
+			std::for_each(this->_gameWidgetItemsList.begin(), this->_gameWidgetItemsList.end(), [&](const auto sit){
+				sit.second.qtItem->setSelected(false);
+			});
+
+			condIt->second.qtItem->setSelected(true);
+			this->updateGameData(condIt->second.gameInfos.getInfos());
 		}
 	}
 	return (true);
@@ -144,6 +168,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent *evt)
 
 const MainWindow::GameWidgetItemStruct& MainWindow::getSelectedWidget()
 {
+	if (this->_ui->GamesList->selectedItems().size() == 0) {
+		throw nx::NoSelectedWidgetException();
+	}
+
 	auto selectedItem = this->_ui->GamesList->selectedItems().at(0);
 	for (const auto& it : this->_gameWidgetItemsList) {
 		if (it.second.qtItem.get() == selectedItem) {
@@ -215,6 +243,26 @@ void MainWindow::StoreLabelLeft()
 	this->_listWidgets["StoreLabel"]->setCursor(Qt::ArrowCursor);
 }
 
+// Triggered when the mouse is entering the CloseLogo label
+void MainWindow::CloseLabelEntered()
+{
+	this->_closeLabelAnim->setDuration(250);
+	this->_closeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
+	this->_closeLabelAnim->setEndValue(QColor(QString::fromStdString(nx::REDFLAT)));
+	this->_closeLabelAnim->start();
+	this->_listWidgets["LogoClose"]->setCursor(Qt::PointingHandCursor);
+}
+
+// Triggered when the mouse is leaving the CloseLogo label
+void MainWindow::CloseLabelLeft()
+{
+	this->_closeLabelAnim->setDuration(0);
+	this->_closeLabelAnim->setStartValue(QColor(255, 255, 255, 140));
+	this->_closeLabelAnim->setEndValue(QColor(255, 255, 255, 140));
+	this->_closeLabelAnim->start();
+	this->_listWidgets["LogoClose"]->setCursor(Qt::ArrowCursor);
+}
+
 // Triggered when the play button is clicked
 void MainWindow::GamePlayButtonClicked()
 {
@@ -224,6 +272,35 @@ void MainWindow::GamePlayButtonClicked()
 
 	std::shared_ptr<QProcess> pc = std::make_shared<QProcess>(this);
     pc->startDetached(cmd);
+}
+
+void MainWindow::updateGameData(const std::unordered_map<std::string, std::string>& infos)
+{
+	std::string absPath(this->_uiSystem.getRoot().getBinaryAbsolutePath());
+
+	this->_ui->GameTitleLabel->setText(QString::fromStdString(infos.at("title")));
+	this->_ui->GameAuthorLabel->setText(this->_createAuthorLabelData(infos.at("author")));
+	QFont font(this->_ui->GameTitleLabel->font());
+	font.setCapitalization(QFont::AllUppercase);
+	font.setLetterSpacing(QFont::AbsoluteSpacing, 2);
+	this->_ui->GameTitleLabel->setFont(font);
+	this->_ui->GameUrlLabel->setText((infos.at("url") != "none") ? (this->_createUrlLabelData(infos.at("url"))) : (QString::fromStdString("")));
+	this->_ui->GameHeaderDescriptionLabel->setText(QString::fromStdString("Description:"));
+	this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos.at("description")));
+	this->_ui->GamePlayButton->setHidden(false);
+	this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos.at("version")));
+	if (QImageReader::imageFormat(QString::fromStdString(absPath + "/" + infos.at("cover"))).isEmpty())
+		this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
+	else
+	{
+		std::replace(absPath.begin(), absPath.end(), '\\', '/');
+
+		this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
+			"#GameDataWidget {border-image: url(" + absPath + "/" + infos.at("cover") + ") 0 0 0 0 stretch stretch;}"
+			"#GameDataOverlay {background-color: rgba(0, 0, 0, 0.5);}"
+			"#GameDataOverlay * {background-color: rgba(0, 0, 0, 0);}"
+		));
+	}
 }
 
 
@@ -236,31 +313,7 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 		if (it.second.qtItem.get() == current)
 		{
 			std::unordered_map<std::string, std::string> infos = it.second.gameInfos.getInfos();
-			std::string absPath(this->_uiSystem.getRoot().getBinaryAbsolutePath());
-
-			this->_ui->GameTitleLabel->setText(QString::fromStdString(infos["title"]));
-			this->_ui->GameAuthorLabel->setText(this->_createAuthorLabelData(infos["author"]));
-			QFont font(this->_ui->GameTitleLabel->font());
-			font.setCapitalization(QFont::AllUppercase);
-			font.setLetterSpacing(QFont::AbsoluteSpacing, 2);
-			this->_ui->GameTitleLabel->setFont(font);
-			this->_ui->GameUrlLabel->setText((infos["url"] != "none") ? (this->_createUrlLabelData(infos["url"])) : (QString::fromStdString("")));
-			this->_ui->GameHeaderDescriptionLabel->setText(QString::fromStdString("Description:"));
-			this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos["description"]));
-			this->_ui->GamePlayButton->setHidden(false);
-			this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos["version"]));
-			if (QImageReader::imageFormat(QString::fromStdString(absPath + "/" + infos["cover"])).isEmpty())
-				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
-			else
-			{
-				std::replace(absPath.begin(), absPath.end(), '\\', '/');
-
-				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
-					"#GameDataWidget {border-image: url(" + absPath + "/" + infos["cover"] + ") 0 0 0 0 stretch stretch;}"
-					"#GameDataOverlay {background-color: rgba(0, 0, 0, 0.5);}"
-					"#GameDataOverlay * {background-color: rgba(0, 0, 0, 0);}"
-				));
-			}
+			this->updateGameData(infos);
 		}
 	}
 }
@@ -293,7 +346,7 @@ bool MainWindow::_initListWidgets()
 		{ "LogoLabel", std::make_shared<QLabel>(this->_ui->NavBarFrame) },
 		{ "GamesLabel", std::make_shared<InteractiveLabel>(this->_ui->NavBarFrame, "GAMES", 12) },
 		{ "StoreLabel", std::make_shared<InteractiveLabel>(this->_ui->NavBarFrame, "STORE", 12) },
-		{ "LogoClose", std::make_shared<InteractiveLabel>(this) }
+		{ "LogoClose", std::make_shared<InteractiveLabel>(this, u8"\uf00d") }
 	};
 	return (true);
 }
@@ -303,6 +356,7 @@ bool MainWindow::_initAnimators()
 {
 	this->_gamesLabelAnim = std::make_shared<QPropertyAnimation>(this->_listWidgets["GamesLabel"].get(), "color");
 	this->_storeLabelAnim = std::make_shared<QPropertyAnimation>(this->_listWidgets["StoreLabel"].get(), "color");
+	this->_closeLabelAnim = std::make_shared<QPropertyAnimation>(this->_listWidgets["LogoClose"].get(), "color");
 	return (true);
 }
 
@@ -330,15 +384,21 @@ bool MainWindow::_displayCloseIcon()
 	if (!logo)
 		return (false);
 
-	QPixmap img(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/images/icons/closeicon.png"));
-
 	logo->setContentsMargins(0, 10, 10, 0);
-	logo->setPixmap(img);
-	logo->setFixedSize(26, 26);
+	logo->setFixedSize(32, 32);
 	logo->setAlignment(Qt::AlignRight | Qt::AlignTop);
-	
-	/*logo->setStyleSheet("background-color: rgba(0, 0, 0, 140);");*/
 
+	if (QFontDatabase::addApplicationFont(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/fonts/fontawesome-webfont.ttf")) < 0)
+		std::cout << "couldn't load FA" << std::endl;
+
+	QFont font;
+
+	font.setFamily("FontAwesome");
+	font.setPixelSize(24);
+
+	logo->setFont(font);
+	logo->setColor(QColor(255, 255, 255, 140));
+	
 	this->_ui->CloseLogoLayout->addWidget(logo);
 	this->_ui->CloseLogoLayout->setAlignment(logo, Qt::AlignRight | Qt::AlignTop);
 	return (true);

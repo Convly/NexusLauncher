@@ -13,10 +13,13 @@
 #include <QSizeGrip>
 #include <QProcess>
 #include <QImageReader>
+#include <QFontDatabase>
 #include "GameInfos.hpp"
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
 #include "ngamewidgetitem.h"
+
+#include "NoSelectedWidgetException.hpp"
 
 namespace fs = std::experimental::filesystem;
 
@@ -62,7 +65,8 @@ public:
 	void mousePressEvent(QMouseEvent * evt);
 	void mouseMoveEvent(QMouseEvent * evt);
 	const MainWindow::GameWidgetItemStruct& getSelectedWidget(void);
-
+	void updateGameData(const std::unordered_map<std::string, std::string>& infos);	
+	
 private:
 	bool	_initListWidgets();
 	bool	_initAnimators();
@@ -83,6 +87,8 @@ public slots:
 	void StoreLabelClicked();
 	void StoreLabelEntered();
 	void StoreLabelLeft();
+	void CloseLabelEntered();
+	void CloseLabelLeft();
 	void ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous);
 	void QuitApplication();
 	void GamePlayButtonClicked();
@@ -93,6 +99,7 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<QWidget>>			_listWidgets;
 	std::shared_ptr<QPropertyAnimation>									_gamesLabelAnim;
 	std::shared_ptr<QPropertyAnimation>									_storeLabelAnim;
+	std::shared_ptr<QPropertyAnimation>									_closeLabelAnim;
 	std::unordered_map<std::string, GameWidgetItemStruct>				_gameWidgetItemsList;
 	std::vector<nx::GameInfos>											_gamesFound;
 
