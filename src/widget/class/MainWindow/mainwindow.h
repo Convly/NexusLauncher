@@ -4,16 +4,26 @@
 #include <memory>
 #include <unordered_map>
 #include <string>
+#include <experimental/filesystem>
 #include <QMainWindow>
 #include <QPropertyAnimation>
 #include <QMouseEvent>
 #include <QTimer>
 #include <QListWidget>
 #include <QSizeGrip>
+#include <QProcess>
 #include "GameInfos.hpp"
 #include "ui_mainwindow.h"
 #include "InteractiveLabel.hpp"
 #include "ngamewidgetitem.h"
+
+namespace fs = std::experimental::filesystem;
+
+#if defined(__GNUC__) || defined(__GNUG__)
+	static const std::string BINARY_EXTENSION = "";
+#elif defined(_MSC_VER)
+	static const std::string BINARY_EXTENSION = ".exe";
+#endif
 
 namespace Ui {
 	class MainWindow;
@@ -50,6 +60,7 @@ public:
 
 	void mousePressEvent(QMouseEvent * evt);
 	void mouseMoveEvent(QMouseEvent * evt);
+	const MainWindow::GameWidgetItemStruct& getSelectedWidget(void);
 
 private:
 	bool	_initListWidgets();
@@ -72,6 +83,7 @@ public slots:
 	void StoreLabelEntered();
 	void StoreLabelLeft();
 	void ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous);
+	void GamePlayButtonClicked();
 
 private:
 	std::shared_ptr<Ui::MainWindow>										_ui;

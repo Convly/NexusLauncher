@@ -23,7 +23,8 @@ namespace nx {
 			"cover",
 			"description",
 			"url",
-			"remote"
+			"remote",
+			"command"
 		};
 
 	public:
