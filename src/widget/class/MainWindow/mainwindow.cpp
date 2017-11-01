@@ -248,8 +248,7 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 			this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos["description"]));
 			this->_ui->GamePlayButton->setHidden(false);
 			this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos["version"]));
-			if (infos["cover"] == "default" || QImageReader::imageFormat(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/" +
-																								infos["cover"])).isEmpty())
+			if (QImageReader::imageFormat(QString::fromStdString(infos["cover"])).isEmpty())
 				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
 			else
 			{
