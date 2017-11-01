@@ -45,6 +45,11 @@ char** nx::Launcher::getArgv() const
 	return this->_argv;
 }
 
+std::string const nx::Launcher::getBinaryAbsolutePath() const
+{
+	return (fs::absolute(fs::path(this->_argv[0]).parent_path()).string());
+}
+
 bool nx::Launcher::init()
 {
 	for (auto& it : this->_systems) {

@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <unordered_map>
 #include "SystemTpl.hpp"
+#include "Launcher.hpp"
 #include "mainwindow.h"
 
 namespace nx {

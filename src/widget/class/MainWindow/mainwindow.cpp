@@ -18,7 +18,6 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	}
 
 	QSizeGrip *grip = new QSizeGrip(this);
-	//grip->setFixedSize(10, 10);
 
 	this->statusBar()->hide();
 	this->_ui->GameDataLayout->addWidget(grip, 0, Qt::AlignBottom | Qt::AlignRight);
@@ -82,7 +81,8 @@ bool MainWindow::addGameToGamesList(nx::GameInfos const& gameInfos)
 	if (this->_gameWidgetItemsList.find(path) == this->_gameWidgetItemsList.end())
 	{
 		this->_gameWidgetItemsList.insert({path, GameWidgetItemStruct(gameInfos.getPath(),
-																		  std::make_shared<NGameWidgetItem>(this, infos["icon"], infos["title"]),
+																		  std::make_shared<NGameWidgetItem>(this, this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/" + infos["icon"],
+																											infos["title"]),
 																		  std::make_shared<QListWidgetItem>(this->_ui->GamesList))});
 
 		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[path].qtItem.get());
@@ -264,14 +264,19 @@ void MainWindow::updateGameData(const std::unordered_map<std::string, std::strin
 	this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos.at("description")));
 	this->_ui->GamePlayButton->setHidden(false);
 	this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos.at("version")));
-	if (infos.at("cover") == "default" /*|| cover not found*/)
+	if (QImageReader::imageFormat(QString::fromStdString(infos.at("cover"))).isEmpty())
 		this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
 	else
+	{
+		std::string absPath(this->_uiSystem.getRoot().getBinaryAbsolutePath());
+		std::replace(absPath.begin(), absPath.end(), '\\', '/');
+
 		this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
-			"#GameDataWidget {border-image: url(" + infos.at("cover") + ") 0 0 0 0 stretch stretch;}"
+			"#GameDataWidget {border-image: url(" + absPath + "/" + infos.at("cover") + ") 0 0 0 0 stretch stretch;}"
 			"#GameDataOverlay {background-color: rgba(0, 0, 0, 0.5);}"
 			"#GameDataOverlay * {background-color: rgba(0, 0, 0, 0);}"
-	));
+		));
+	}
 }
 
 
@@ -338,7 +343,7 @@ bool MainWindow::_displayNexusLogo()
 	if (!logo)
 		return (false);
 
-	QPixmap img("../ressources/images/icons/nexuslogo.png");
+	QPixmap img(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/images/icons/nexuslogo.png"));
 
 	logo->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
 	logo->setPixmap(img.scaled(160, 90, Qt::KeepAspectRatio));
@@ -354,7 +359,7 @@ bool MainWindow::_displayCloseIcon()
 	if (!logo)
 		return (false);
 
-	QPixmap img("../ressources/images/icons/closeicon.png");
+	QPixmap img(QString::fromStdString(this->_uiSystem.getRoot().getBinaryAbsolutePath() + "/../ressources/images/icons/closeicon.png"));
 
 	logo->setContentsMargins(0, 10, 10, 0);
 	logo->setPixmap(img);
