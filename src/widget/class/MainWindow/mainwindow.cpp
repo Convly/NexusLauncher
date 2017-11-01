@@ -236,6 +236,7 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 		if (it.second.qtItem.get() == current)
 		{
 			std::unordered_map<std::string, std::string> infos = it.second.gameInfos.getInfos();
+			std::string absPath(this->_uiSystem.getRoot().getBinaryAbsolutePath());
 
 			this->_ui->GameTitleLabel->setText(QString::fromStdString(infos["title"]));
 			this->_ui->GameAuthorLabel->setText(this->_createAuthorLabelData(infos["author"]));
@@ -248,11 +249,10 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 			this->_ui->GameDescriptionLabel->setText(QString::fromStdString(infos["description"]));
 			this->_ui->GamePlayButton->setHidden(false);
 			this->_ui->GameVersionLabel->setText(QString::fromStdString("Version " + infos["version"]));
-			if (QImageReader::imageFormat(QString::fromStdString(infos["cover"])).isEmpty())
+			if (QImageReader::imageFormat(QString::fromStdString(absPath + "/" + infos["cover"])).isEmpty())
 				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString("#GameDataWidget {background-image: none;}"));
 			else
 			{
-				std::string absPath(this->_uiSystem.getRoot().getBinaryAbsolutePath());
 				std::replace(absPath.begin(), absPath.end(), '\\', '/');
 
 				this->_ui->GameDataWidget->setStyleSheet(QString::fromStdString(
@@ -334,10 +334,13 @@ bool MainWindow::_displayCloseIcon()
 
 	logo->setContentsMargins(0, 10, 10, 0);
 	logo->setPixmap(img);
-	logo->setFixedSize(26, 100);
+	logo->setFixedSize(26, 26);
 	logo->setAlignment(Qt::AlignRight | Qt::AlignTop);
+	
+	/*logo->setStyleSheet("background-color: rgba(0, 0, 0, 140);");*/
 
 	this->_ui->CloseLogoLayout->addWidget(logo);
+	this->_ui->CloseLogoLayout->setAlignment(logo, Qt::AlignRight | Qt::AlignTop);
 	return (true);
 }
 
