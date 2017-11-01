@@ -7,7 +7,8 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QMainWindow(parent, Qt::FramelessWindowHint),
 	_ui(std::make_shared<Ui::MainWindow>()),
 	_uiSystem(uiSystem),
-	_timer(std::make_shared<QTimer>(this))
+	_timer(std::make_shared<QTimer>(this)),
+	_isClosing(false)
 {
 	this->_ui->setupUi(this);
 
@@ -56,7 +57,7 @@ MainWindow::MainWindow(QWidget *parent, nx::UISystem &uiSystem) :
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(clicked()), this, SLOT(StoreLabelClicked()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(entered()), this, SLOT(StoreLabelEntered()));
 	QObject::connect(this->_listWidgets["StoreLabel"].get(), SIGNAL(left()), this, SLOT(StoreLabelLeft()));
-	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), qApp, SLOT(quit()));
+	QObject::connect(this->_listWidgets["LogoClose"].get(), SIGNAL(clicked()), this, SLOT(QuitApplication()));
 
 	QObject::connect(this->_ui->GamePlayButton, SIGNAL(clicked()), this, SLOT(GamePlayButtonClicked()));
 
@@ -228,6 +229,8 @@ void MainWindow::GamePlayButtonClicked()
 
 void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
+	if (this->_isClosing)
+		return;
 	for (auto it : this->_gameWidgetItemsList)
 	{
 		if (it.second.qtItem.get() == current)
@@ -255,6 +258,12 @@ void MainWindow::ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previ
 			));
 		}
 	}
+}
+
+void MainWindow::QuitApplication()
+{
+	this->_isClosing = true;
+	QApplication::quit();
 }
 
 /*********************\

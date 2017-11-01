@@ -83,6 +83,7 @@ public slots:
 	void StoreLabelEntered();
 	void StoreLabelLeft();
 	void ItemHasChanged(QListWidgetItem *current, QListWidgetItem *previous);
+	void QuitApplication();
 	void GamePlayButtonClicked();
 
 private:
@@ -96,6 +97,7 @@ private:
 
 	QPointF																_oldMovingPos;
 	std::shared_ptr<QTimer>												_timer;
+	bool																_isClosing;
 };
 
 #endif // MAINWINDOW_H
