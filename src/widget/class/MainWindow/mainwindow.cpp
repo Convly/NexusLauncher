@@ -83,7 +83,7 @@ bool MainWindow::addGameToGamesList(nx::GameInfos const& gameInfos)
 																		  std::make_shared<QListWidgetItem>(this->_ui->GamesList))});
 
 		this->_ui->GamesList->addItem(this->_gameWidgetItemsList[path].qtItem.get());
-		this->_gameWidgetItemsList[path].qtItem->setSizeHint(this->_gameWidgetItemsList[path].nxItem->sizeHint());
+		this->_gameWidgetItemsList[path].qtItem->setSizeHint(QSize(this->_gameWidgetItemsList[path].nxItem->sizeHint().width(), 140));
 		this->_ui->GamesList->setItemWidget(this->_gameWidgetItemsList[path].qtItem.get(), this->_gameWidgetItemsList[path].nxItem.get());
 		if (!this->_ui->GamesList->selectedItems().count())
 		{

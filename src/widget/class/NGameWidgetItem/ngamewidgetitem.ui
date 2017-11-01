@@ -10,10 +10,16 @@
     <height>150</height>
    </rect>
   </property>
-  <property name="minimumSize">
+  <property name="maximumSize">
    <size>
-    <width>1</width>
-    <height>0</height>
+    <width>16777215</width>
+    <height>160</height>
+   </size>
+  </property>
+  <property name="baseSize">
+   <size>
+    <width>150</width>
+    <height>150</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -58,6 +64,18 @@
        </property>
        <item>
         <widget class="QLabel" name="GameName">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Ignored" vsizetype="Preferred">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>15</height>
+          </size>
+         </property>
          <property name="autoFillBackground">
           <bool>false</bool>
          </property>
@@ -65,7 +83,7 @@
           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ffffff;&quot;&gt;Game Name&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
          </property>
          <property name="alignment">
-          <set>Qt::AlignCenter</set>
+          <set>Qt::AlignHCenter|Qt::AlignTop</set>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
